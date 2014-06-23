@@ -7,8 +7,7 @@ end
 
 dpkg_package 'chef-server' do
   source deb_path
-  notifies :run, 'execute[chef_server_reconfigure]', :immediately
-  notifies :run 'ruby_block[copy_over_adminpem]'
+  notifies :run, 'execute[chef_server_reconfigure]'
 end
 
 execute 'chef_server_reconfigure' do
