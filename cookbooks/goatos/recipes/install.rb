@@ -78,6 +78,12 @@ directory '/opt/goatos/.ssh' do
   mode 0700
 end
 
+directory '/opt/goatos/lxc.conf.d' do
+  user node['goatos']['user']
+  group node['goatos']['group']
+  mode 0751
+end
+
 file '/etc/lxc/lxc-usernet' do
   owner 'root'
   group 'root'
