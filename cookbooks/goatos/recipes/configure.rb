@@ -1,3 +1,6 @@
+chef_gem "sshkey" do
+  action :install
+end
 
 require 'sshkey'
 
