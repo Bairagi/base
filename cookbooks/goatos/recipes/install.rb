@@ -8,7 +8,6 @@ package 'haproxy'
 
 gem_package 'ruby-lxc' do
   gem_binary '/opt/chef/embedded/bin/gem'
-  version '1.1'
 end
 
 gem_package 'sshkey' do
