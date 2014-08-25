@@ -2,22 +2,16 @@ chef_gem "sshkey" do
   action :install
 end
 
-require 'sshkey'
+base 'lxc.conf' do
+  title "lxc.conf"
+  path '/opt/goatos/.config/lxc/default.conf'
+  action :create
+end
 
-u_start, u_range = ::File.read('/etc/subuid').scan(/goatos:(\d+):(\d+)/).flatten
-g_start, g_range = ::File.read('/etc/subgid').scan(/goatos:(\d+):(\d+)/).flatten
-
-template '/opt/goatos/.config/lxc/default.conf' do
-  owner node['goatos']['user']
-  group node['goatos']['group']
-  mode 0644
-  source 'lxc.conf.erb'
-  variables(
-    u_start: u_start,
-    u_range: u_range,
-    g_start: g_start,
-    g_range: g_range
-  )
+base 'lamp-template' do
+  title "lamp.conf"
+  path '/opt/goatos/.local/share/lxc/lamp-template/config'
+  action :Create
 end
 
 unless ::File.exist?('/opt/goatos/.ssh/authorized_keys')
