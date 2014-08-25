@@ -20,6 +20,7 @@ end
 
 user 'goatos' do
   home '/opt/goatos'
+  shell '/bin/bash'
   supports(manage_home: true)
 end
 
