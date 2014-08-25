@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+# vim: set ft=ruby:
+
+require 'mixlib/cli'
+require 'blender'
+require 'highline/import'
+
+class GoatCLI
+  include Mixlib::CLI
+
+  option :target,
+    short: '-t TARGET',
+    long: '--target TARGET',
+    required: true,
+    description: 'Target host IP/FQDN'
+
+  option :user,
+    short: '-u USER',
+    long: '--user USER',
+    required: true,
+    description: 'SSH user name'
+end
+
+if $0 == __FILE__
+  cli = GoatCLI.new
+  cli.parse_options
+  password = ask('SSH Password: '){ |q| q.echo = false }
+  sub_config = {
+    scheduler:{
+      ssh: { user: cli.config[:user], password: password },
+      goatos: { master: cli.config[:target]}
+    }
+  }
+  File.open('config.json', 'w') do |f|
+    f.write(JSON.pretty_generate(sub_config))
+  end
+  Blender.blend('~=GoatOS=~') do |sched|
+    sched.config(:shell_out, stdout: $stdout, timeout: 3600)
+    sched.members ['localhost']
+    sched.task 'setup chef server' do
+      execute 'bundle exec blend -f blends/master.rb -c config.json'
+    end
+    sched.task 'setup goatos slave' do
+      execute 'bundle exec blend -f blends/slave.rb -c config.json'
+    end
+  end
+end
