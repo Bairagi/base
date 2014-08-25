@@ -19,3 +19,11 @@ Additional hosts (lxc hosts, without chef server) can be added using:
 ```sh
 bundle exec ./bin/goatos bootstrap -b slave -t 192.168.1.49 -u ubuntu
 ```
+
+All goatos slave nodes can be accessed via their authorized ssh keys. To create a container in any
+of the slaves:
+
+```sh
+ssh goatos@SLAVE_IP -i keys/SLAVE.rsa
+lxc-create -n test01 -t download -- -d ubuntu -r trusty -a amd64
+```
