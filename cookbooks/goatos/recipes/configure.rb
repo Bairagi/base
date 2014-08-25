@@ -30,3 +30,16 @@ unless ::File.exist?('/opt/goatos/.ssh/authorized_keys')
   end
   node.set['goatos']['sshkey'] = k.private_key
 end
+
+execute "cgroups" do
+  command "sudo cgm create all goatos && sudo cgm chown all goatos $(id -u goatos) $(id -g goatos)"
+end
+
+ruby_block "edit bashrc" do
+  block do
+   line = 'source /opt/goatos/lxc.conf.d/cgmmove'
+   brc = Chef::Util::FileEdit.new("/opt/goatos/.bashrc")
+   brc.insert_line_if_no_match(/#{line}/, line)
+   brc.write_file
+  end
+end

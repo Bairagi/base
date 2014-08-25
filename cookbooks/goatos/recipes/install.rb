@@ -109,3 +109,10 @@ file '/etc/lxc/lxc-usernet' do
   mode 0644
   content "#{node['goatos']['user']} veth lxcbr0 100\n"
 end
+
+file '/opt/goatos/lxc.conf.d/cgmmove' do
+  owner 'goatos'
+  group 'goatos'
+  mode 0755
+  content "cgm movepid all #{node['goatos']['user']} $$ > /dev/null 2>&1"
+end
