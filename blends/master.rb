@@ -1,10 +1,8 @@
 require 'goatos_helper'
 config(:ssh, stdout: $stdout)
-members [ Blender::Configuration[:goatos]['master']]
+members [ Blender::Configuration[:goatos]['target']]
 
 ssh_task 'sudo apt-get update -y'
-
-ssh_task 'sudo apt-get dist-upgrade -y'
 
 ssh_task 'download chef server' do
   execute 'wget -c https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/12.04/x86_64/chef-server_11.1.4-1_amd64.deb'

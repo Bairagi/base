@@ -20,11 +20,17 @@ class GoatCLI
     required: true,
     description: 'SSH user name'
 
+  option :master_node,
+    short: '-M MASTER_NODE',
+    long: '--master MASTER_NODE',
+    description: 'chef node name of the master node (default sauron)',
+    default: 'sauron'
+
   option :bootstrap,
     short: '-b master',
     long: '--bootstrap master',
     default: 'standalone',
-    description: 'Bootstrap a node  (can be master or slave'
+    description: 'Bootstrap a node  (can be "master" or "slave" or "standalone")'
 
 
   def bootstrap
@@ -61,7 +67,7 @@ if $0 == __FILE__
   sub_config = {
     scheduler:{
       ssh: { user: cli.config[:user], password: password },
-      goatos: { master: cli.config[:target]}
+      goatos: { target: cli.config[:target], name: cli.config[:master_node]}
     }
   }
   File.open('config.json', 'w') do |f|

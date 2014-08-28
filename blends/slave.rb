@@ -2,7 +2,7 @@ require 'goatos_helper'
 config(:ruby, stdout: $stdout)
 config(:ssh, stdout: $stdout)
 goatos = Blender::Configuration[:goatos]
-members [goatos['master']]
+members [goatos['target']]
 ruby_task 'bootstrap' do
   execute do |h|
     extend GoatOS::Helper
