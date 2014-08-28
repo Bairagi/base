@@ -11,6 +11,21 @@ base_haproxy 'haproxy.cfg' do
   action :create
 end
 
+ruby_block "enable haproxy" do
+  block do
+    line = 'ENABLED=0'
+    newline = 'ENABLED=1'
+    en = Chef::Util::FileEdit.new("/etc/default/haproxy")
+    en.search_file_replace_line(/#{line}/, newline)
+    en.write_file
+  end
+end
+
+service "haproxy" do
+  action :start
+  ignore_failure :true
+end
+
 service "haproxy" do
   supports :status => true
   action :start
