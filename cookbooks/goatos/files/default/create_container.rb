@@ -38,7 +38,7 @@ class Container
     end
   end
 
-  def get_ips
+  def ips
     @container.ip_addresses
   end
 
@@ -53,7 +53,7 @@ if arguments.length == 4
   container.create_and_start
   container.set_cgroup_limits
   container.attach
-  puts container.get_ips
+  puts container.ips
 else
   puts "Please check the number of arguments passed, it should be four arguments maximum."
 end
