@@ -8,12 +8,6 @@ base 'lxc.conf' do
   action :create
 end
 
-base 'lamp-template' do
-  title "lamp.conf"
-  path '/opt/goatos/.local/share/lxc/lamp-template/config'
-  action :Create
-end
-
 unless ::File.exist?('/opt/goatos/.ssh/authorized_keys')
   k = SSHKey.generate
   file '/opt/goatos/.ssh/authorized_keys' do
