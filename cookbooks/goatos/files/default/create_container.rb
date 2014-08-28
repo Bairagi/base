@@ -1,5 +1,6 @@
 #!/opt/chef/embedded/bin/ruby
 require 'lxc'
+require 'lxc-extra'
 
 class Container
   attr_accessor :name, :type, :memory, :cpus
@@ -32,7 +33,7 @@ class Container
   end
 
   def attach
-    @container.attach do
+    @container.execute do
     #run custom commands inside containers
     end
   end

@@ -11,6 +11,10 @@ gem_package 'ruby-lxc' do
   gem_binary '/opt/chef/embedded/bin/gem'
 end
 
+gem_package 'lxc-extra' do
+  gem_binary '/opt/chef/embedded/bin/gem'
+end
+
 gem_package 'sshkey' do
   gem_binary '/opt/chef/embedded/bin/gem'
 end
