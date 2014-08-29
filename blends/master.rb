@@ -39,8 +39,19 @@ ruby_task 'wait 10s' do
   end
 end
 
+ruby_task 'save knife config' do
+  execute do |h|
+    File.open('etc/knife.rb', 'w') do |f|
+      f.puts("chef_server_url 'https://#{h}'")
+      f.puts("node_name 'admin'")
+      f.puts("client_key 'keys/admin.pem'")
+      f.puts("validation_key 'keys/chef-validator.pem'")
+    end
+  end
+end
+
 ruby_task 'upload cookbooks' do
-  execute do
+  execute do |h|
     extend GoatOS::Helper
     knife Chef::Knife::RoleFromFile, 'roles/slave.rb', 'roles/install.rb'
     knife Chef::Knife::CookbookUpload do |config|
@@ -51,13 +62,3 @@ ruby_task 'upload cookbooks' do
   driver_options(stdout: $stdout)
 end
 
-ruby_task 'save knife config' do
-  execute do |h|
-    File.open('etc/knife.rb', 'w') do |f|
-      f.puts("chef_server_url 'https://#{h}'")
-      f.puts("node_name 'admin'")
-      f.puts("client_key '../keys/admin.pem'")
-      f.puts("validation_key '../keys/chef-validator.pem'")
-    end
-  end
-end
