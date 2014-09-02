@@ -5,6 +5,7 @@ module GoatOS
   class CLI
 
     include Mixlib::CLI
+    include Builder
 
     option :target,
       short: '-t TARGET',
@@ -36,24 +37,17 @@ module GoatOS
       Dir.chdir(cwd) do
         write_config
         Blender.blend('GoatOS_Bootstrap') do |sched|
+          build = Builder.new(sched)
+
           sched.config(:shell_out, stdout: $stdout, timeout: 3600)
           sched.members ['localhost']
           case config[:bootstrap]
           when 'master'
-            sched.task 'setup chef server' do
-              execute 'bundle exec blend -f blends/master.rb -c config.json'
-            end
+            build.master
           when 'slave'
-            sched.task 'setup goatos slave' do
-              execute 'bundle exec blend -f blends/slave.rb -c config.json'
-            end
+            build.master
           when 'standalone'
-            sched.task 'setup chef server' do
-              execute 'bundle exec blend -f blends/master.rb -c config.json'
-            end
-            sched.task 'setup goatos slave' do
-              execute 'bundle exec blend -f blends/slave.rb -c config.json'
-            end
+            build.standalone
           else
             abort 'only master, slave or standalone bootstrap is valid'
           end
