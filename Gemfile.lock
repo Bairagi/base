@@ -25,6 +25,7 @@ PATH
       blender
       blender-chef
       chef
+      thor
 
 GEM
   remote: https://rubygems.org/

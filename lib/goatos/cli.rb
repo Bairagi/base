@@ -1,8 +1,9 @@
 require 'goatos/log'
 require 'highline/import'
-GoatOS::Log.level = :info
+
 module GoatOS
   class CLI
+
     include Mixlib::CLI
 
     option :target,
@@ -10,6 +11,7 @@ module GoatOS
       long: '--target TARGET',
       required: true,
       description: 'Target host IP/FQDN'
+
 
     option :user,
       short: '-u USER',
@@ -30,34 +32,33 @@ module GoatOS
       description: 'Bootstrap a node  (can be "master" or "slave" or "standalone")'
 
 
-    def bootstrap
-      write_config
-      Blender.blend('~=GoatOS=~') do |sched|
-        sched.config(:shell_out, stdout: $stdout, timeout: 3600)
-        sched.members ['localhost']
-        case config[:bootstrap]
-        when 'master'
-          sched.task 'setup chef server' do
-            execute 'bundle exec blend -f blends/master.rb -c config.json'
+    def bootstrap(cwd = Dir.pwd)
+      Dir.chdir(cwd) do
+        write_config
+        Blender.blend('GoatOS_Bootstrap') do |sched|
+          sched.config(:shell_out, stdout: $stdout, timeout: 3600)
+          sched.members ['localhost']
+          case config[:bootstrap]
+          when 'master'
+            sched.task 'setup chef server' do
+              execute 'bundle exec blend -f blends/master.rb -c config.json'
+            end
+          when 'slave'
+            sched.task 'setup goatos slave' do
+              execute 'bundle exec blend -f blends/slave.rb -c config.json'
+            end
+          when 'standalone'
+            sched.task 'setup chef server' do
+              execute 'bundle exec blend -f blends/master.rb -c config.json'
+            end
+            sched.task 'setup goatos slave' do
+              execute 'bundle exec blend -f blends/slave.rb -c config.json'
+            end
+          else
+            abort 'only master, slave or standalone bootstrap is valid'
           end
-        when 'slave'
-          sched.task 'setup goatos slave' do
-            execute 'bundle exec blend -f blends/slave.rb -c config.json'
-          end
-        when 'standalone'
-          sched.task 'setup chef server' do
-            execute 'bundle exec blend -f blends/master.rb -c config.json'
-          end
-          sched.task 'setup goatos slave' do
-            execute 'bundle exec blend -f blends/slave.rb -c config.json'
-          end
-        else
-          abort 'only master, slave or standalone bootstrap is valid'
         end
       end
-    end
-
-    def cleanse
     end
 
     def write_config( path = 'config.json' )

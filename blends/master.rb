@@ -25,7 +25,7 @@ end
 
   ruby_task "store file '#{key}'" do
     execute do |h|
-      File.open(File.join('keys', key), 'w') do |f|
+      File.open(File.join('keys', key), File::CREAT|File::RDWR|File::EXCL) do |f|
         f.write(printer.string.gsub(/^blender sudo password:\s*$/,'').strip)
       end
       printer.rewind
@@ -41,11 +41,14 @@ end
 
 ruby_task 'save knife config' do
   execute do |h|
-    File.open('etc/knife.rb', 'w') do |f|
-      f.puts("chef_server_url 'https://#{h}'")
-      f.puts("node_name 'admin'")
-      f.puts("client_key 'keys/admin.pem'")
-      f.puts("validation_key 'keys/chef-validator.pem'")
+    File.open('etc/knife.rb', File::CREAT|File::RDWR|File::EXCL) do |f|
+      f.puts <<-EOF
+        cwd = File.expand_path('../../', __FILE__)
+        chef_server_url 'https://#{h}'
+        node_name 'admin'
+        client_key File.join(cwd, 'keys/admin.pem')
+        validation_key File.join(cwd, 'keys/chef-validator.pem')
+      EOF
     end
   end
 end
@@ -61,4 +64,3 @@ ruby_task 'upload cookbooks' do
   end
   driver_options(stdout: $stdout)
 end
-

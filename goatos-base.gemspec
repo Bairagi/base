@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ['lib']
 
+  spec.add_dependency 'thor'
   spec.add_dependency 'chef'
   spec.add_dependency 'blender'
   spec.add_dependency 'blender-chef'
