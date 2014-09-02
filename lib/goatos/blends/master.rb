@@ -61,7 +61,7 @@ module GoatOS
 
           sched.ruby_task 'upload cookbooks' do
             execute do |h|
-              extend GoatOS::Helper
+              extend Helper
               knife Chef::Knife::RoleFromFile, 'roles/slave.rb', 'roles/install.rb'
               knife Chef::Knife::CookbookUpload do |config|
                 config[:cookbook_path] = 'cookbooks'

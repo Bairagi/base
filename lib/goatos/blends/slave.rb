@@ -14,7 +14,7 @@ module GoatOS
 
           sched.ruby_task 'bootstrap' do
             execute do |h|
-              extend GoatOS::Helper
+              extend Helper
               knife Chef::Knife::Bootstrap, h do |config|
                 config[:ssh_user] = Blender::Configuration[:ssh]['user']
                 config[:ssh_password] = Blender::Configuration[:ssh]['password']
@@ -29,7 +29,7 @@ module GoatOS
 
           sched.ruby_task 'set node run list' do
             execute do |h|
-              extend GoatOS::Helper
+              extend Helper
               set_node goatos['name'], run_list: 'role[install]'
             end
           end
@@ -40,7 +40,7 @@ module GoatOS
 
           sched.ruby_task 'Store SSH key' do
             execute do |h|
-              extend GoatOS::Helper
+              extend Helper
               File.open("keys/#{goatos['name']}.rsa", 'w') do |f|
                 f.write(fetch_node(goatos['name'], attrs: 'goatos')['sshkey'])
                 f.chmod(0600)
@@ -50,7 +50,7 @@ module GoatOS
 
           sched.ruby_task 'set final run list' do
             execute do |h|
-              extend GoatOS::Helper
+              extend Helper
               set_node goatos['name'], run_list: 'role[slave]'
             end
           end
