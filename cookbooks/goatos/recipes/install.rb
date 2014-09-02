@@ -1,21 +1,14 @@
-package 'liblxc1'
-package 'lxc'
-package 'lxc-dev'
-package 'lxc-templates'
-package 'python3-lxc'
-package 'build-essential'
-package 'haproxy'
 
-gem_package 'ruby-lxc' do
-  gem_binary '/opt/chef/embedded/bin/gem'
+%w{ liblxc1 lxc lxc-dev lxc-templates python3-lxc build-essential haproxy}.each do |pkg|
+  package pkg do
+    action :install
+  end
+
 end
-
-gem_package 'sshkey' do
-  gem_binary '/opt/chef/embedded/bin/gem'
-end
-
-gem_package 'serfx' do
-  gem_binary '/opt/chef/embedded/bin/gem'
+%w{ruby-lxc serfx sshkey}.each do |gem_name|
+  gem_package gem_name do
+    gem_binary '/opt/chef/embedded/bin/gem'
+  end
 end
 
 user 'goatos' do
