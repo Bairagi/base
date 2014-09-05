@@ -1,5 +1,5 @@
 action :create do
-  log "Adding '#{new_resource.name}' template as #{new_resource.title}!"
+  log "Adding '#{new_resource.name}' template as #{new_resource.path}!"
   u_start, u_range = ::File.read('/etc/subuid').scan(/goatos:(\d+):(\d+)/).flatten
   g_start, g_range = ::File.read('/etc/subgid').scan(/goatos:(\d+):(\d+)/).flatten
   template new_resource.path do

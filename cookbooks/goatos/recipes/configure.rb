@@ -2,7 +2,7 @@ chef_gem "sshkey" do
   action :install
 end
 
-base 'lxc.conf' do
+goatos_lxc_config 'lxc.conf' do
   title "lxc.conf"
   path '/opt/goatos/.config/lxc/default.conf'
   action :create

@@ -23,6 +23,10 @@ gem_package 'serfx' do
   gem_binary '/opt/chef/embedded/bin/gem'
 end
 
+gem_package 'mixlib-cli' do
+  gem_binary '/opt/chef/embedded/bin/gem'
+end
+
 user 'goatos' do
   home '/opt/goatos'
   shell '/bin/bash'

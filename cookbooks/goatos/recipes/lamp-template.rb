@@ -13,7 +13,7 @@ execute "extract-template" do
   comman "sudo tar --same-owner -xzf /opt/goatos/.local/share/lxc/lamp-template/lamp-template.tar.gz -C /opt/goatos/.local/share/lxc/lamp-template/"
 end
 
-base 'lamp-template' do
+goatos_lxc_config 'lamp-template' do
   title "lamp.conf"
   path '/opt/goatos/.local/share/lxc/lamp-template/config'
   action :create
