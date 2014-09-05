@@ -26,12 +26,6 @@ service "haproxy" do
   ignore_failure :true
 end
 
-service "haproxy" do
-  supports :status => true
-  action :start
-end
-
-service "haproxy" do
-  supports :status => false
-  action :reload
+execute 'reload-haproxy' do
+  command "sudo haproxy -f /etc/haproxy/haproxy.cfg -p /var/run/haproxy.pid -sf $(cat /var/run/haproxy.pid)"
 end
