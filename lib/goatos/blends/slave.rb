@@ -38,15 +38,6 @@ module GoatOS
             execute 'sudo chef-client --no-fork'
           end
 
-          sched.ruby_task 'Store SSH key' do
-            execute do |h|
-              extend Helper
-              File.open("keys/#{goatos['name']}.rsa", 'w') do |f|
-                f.write(fetch_node(goatos['name'], attrs: 'goatos')['sshkey'])
-                f.chmod(0600)
-              end
-            end
-          end
 
           sched.ruby_task 'set slave nodes final run list' do
             execute do |h|
@@ -57,6 +48,16 @@ module GoatOS
 
           sched.ssh_task 'run chef' do
             execute 'sudo chef-client --no-fork'
+          end
+
+          sched.ruby_task 'Store SSH key' do
+            execute do |h|
+              extend Helper
+              File.open("keys/#{goatos['name']}.rsa", 'w') do |f|
+                f.write(fetch_node(goatos['name'], attrs: 'goatos')['sshkey'])
+                f.chmod(0600)
+              end
+            end
           end
         end
       end
