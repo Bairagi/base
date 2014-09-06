@@ -3,10 +3,11 @@ require 'goatos/blends/helper'
 module GoatOS
   module Blends
     class Master
-      def self.build
-        Blender.blend 'building master' do |sched|
+      def self.build(config_file)
+        Blender.blend( 'building master', config_file) do |sched|
           sched.config(:ssh, stdout: $stdout)
           sched.members [ Blender::Configuration[:goatos]['target']]
+          goatos = Blender::Configuration[:goatos]
 
           sched.ssh_task 'sudo apt-get update -y'
 
@@ -62,13 +63,39 @@ module GoatOS
           sched.ruby_task 'upload cookbooks' do
             execute do |h|
               extend Helper
-              knife Chef::Knife::RoleFromFile, 'roles/slave.rb', 'roles/install.rb'
+              knife Chef::Knife::RoleFromFile, 'roles/slave.rb', 'roles/install.rb', 'roles/master.rb', 'roles/standalone.rb'
               knife Chef::Knife::CookbookUpload do |config|
                 config[:cookbook_path] = 'cookbooks'
                 config[:all] = true
               end
             end
             driver_options(stdout: $stdout)
+          end
+
+          sched.ruby_task 'bootstrap' do
+            execute do |h|
+              extend Helper
+              knife Chef::Knife::Bootstrap, h do |config|
+                config[:ssh_user] = Blender::Configuration[:ssh]['user']
+                config[:ssh_password] = Blender::Configuration[:ssh]['password']
+                config[:ssh_port] = 22
+                config[:chef_node_name] = goatos['name']
+                config[:distro] = 'chef-full'
+                config[:use_sudo] = true
+                config[:use_sudo_password] = true
+              end
+            end
+          end
+
+          sched.ruby_task 'set master run list' do
+            execute do |h|
+              extend Helper
+              set_node goatos['name'], run_list: 'role[master]'
+            end
+          end
+
+          sched.ssh_task 'run chef' do
+            execute 'sudo chef-client --no-fork'
           end
         end
       end

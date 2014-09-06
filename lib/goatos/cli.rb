@@ -1,5 +1,6 @@
 require 'goatos/log'
 require 'highline/import'
+require 'goatos/builder'
 
 module GoatOS
   class CLI
@@ -35,36 +36,16 @@ module GoatOS
 
     def bootstrap(cwd = Dir.pwd)
       Dir.chdir(cwd) do
-        write_config
-        Blender.blend('GoatOS_Bootstrap') do |sched|
-          build = Builder.new(sched)
-
-          sched.config(:shell_out, stdout: $stdout, timeout: 3600)
-          sched.members ['localhost']
-          case config[:bootstrap]
-          when 'master'
-            build.master
-          when 'slave'
-            build.master
-          when 'standalone'
-            build.standalone
-          else
-            abort 'only master, slave or standalone bootstrap is valid'
-          end
+        case config[:bootstrap]
+        when 'master'
+          build_master
+        when 'slave'
+          build_slave
+        when 'standalone'
+          build_standalone
+        else
+          abort 'only master, slave or standalone bootstrap is valid'
         end
-      end
-    end
-
-    def write_config( path = 'config.json' )
-      password = ask('SSH Password: '){ |q| q.echo = false }
-      sub_config = {
-        scheduler:{
-          ssh: { user: config[:user], password: password },
-          goatos: { target: config[:target], name: config[:name]}
-        }
-      }
-      File.open(path, 'w') do |f|
-        f.write(JSON.pretty_generate(sub_config))
       end
     end
   end

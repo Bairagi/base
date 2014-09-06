@@ -3,8 +3,8 @@ require 'goatos/blends/helper'
 module GoatOS
   module Blends
     class Slave
-      def self.build
-        Blender.blend 'building slave' do |sched|
+      def self.build(config_file)
+        Blender.blend 'building slave', config_file do |sched|
           sched.config(:ruby, stdout: $stdout)
           sched.config(:ssh, stdout: $stdout)
           goatos = Blender::Configuration[:goatos]
@@ -27,7 +27,7 @@ module GoatOS
             end
           end
 
-          sched.ruby_task 'set node run list' do
+          sched.ruby_task 'set slave node intermediate run list' do
             execute do |h|
               extend Helper
               set_node goatos['name'], run_list: 'role[install]'
@@ -48,7 +48,7 @@ module GoatOS
             end
           end
 
-          sched.ruby_task 'set final run list' do
+          sched.ruby_task 'set slave nodes final run list' do
             execute do |h|
               extend Helper
               set_node goatos['name'], run_list: 'role[slave]'
