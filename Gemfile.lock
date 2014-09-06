@@ -199,6 +199,7 @@ DEPENDENCIES
   chef
   goatos-base!
   irbtools
+  pry
   rake
   rspec
   rubocop
