@@ -25,6 +25,7 @@ PATH
       blender
       blender-chef
       chef
+      sshkey
       thor
 
 GEM
@@ -178,6 +179,7 @@ GEM
     slop (3.6.0)
     spoon (0.0.4)
       ffi
+    sshkey (1.6.1)
     systemu (2.6.4)
     thor (0.19.1)
     thread_safe (0.3.4)

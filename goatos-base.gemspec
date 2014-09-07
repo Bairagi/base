@@ -22,6 +22,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'chef'
   spec.add_dependency 'blender'
   spec.add_dependency 'blender-chef'
+  spec.add_dependency 'sshkey'
+
 
   spec.add_development_dependency 'bundler'
   spec.add_development_dependency 'rake'
