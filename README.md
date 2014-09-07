@@ -4,12 +4,21 @@
 `GoatOS Base` allows user to configure and manage ubuntu 14.04 instances with
 Chef and perform distributed tasks using Blender.
 
+### Setup
+clone the GoatOS base repo, and run bundle install
+```sh
+git clone https://github.com/GoatOS/base.git goatos_base
+cd goatos_base
+bundle install --path .bundle
+```
+
 ### Usage
 Typical GoatOS clusters are composed of one master and multiple slave. Master
 hosts chef server, which act as configuration artifact repository and metadata
 source, while the slave nodes run unprivileged LXC instances. Master and slave
 host customization can be done via chef, while container management is done on
-deman via blender.
+demand via blender.
+
 `GoatOS Base` can be installed in a single host ( standalone mode) as well. For
 this create a virtual box vm (or ec2 instance) with ubuntu 14.04. Create an user
 with sudo access and bootstrap the instance with following command:
