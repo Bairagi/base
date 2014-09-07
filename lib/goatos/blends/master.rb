@@ -4,10 +4,18 @@ require 'sshkey'
 module GoatOS
   module Blends
     class Master
-      def self.build( options )
+      def self.build(options )
+        host = options[:host]
+        node_name = options[:name]
+        ssh_options = {user: options[:user]}
+        if options[:password]
+          ssh_options[:password] = options[:password]
+        elsif options[:key]
+          ssh_options[:keys] = Array( options[:key] )
+        end
         Blender.blend( 'building master') do |sched|
-          sched.config(:ssh, stdout: $stdout, user: options[:user], password: options[:password])
-          sched.members [ options[:host]]
+          sched.config(:ssh, ssh_options.merge(stdout: $stdout))
+          sched.members [ host]
 
           sched.ssh_task 'sudo apt-get update -y'
 
@@ -63,7 +71,7 @@ module GoatOS
           sched.ruby_task 'upload cookbooks' do
             execute do |h|
               extend Helper
-              knife Chef::Knife::RoleFromFile, 'roles/slave.rb', 'roles/install.rb', 'roles/master.rb', 'roles/standalone.rb'
+              knife Chef::Knife::RoleFromFile, 'roles/slave.rb', 'roles/master.rb', 'roles/standalone.rb'
               knife Chef::Knife::CookbookUpload do |config|
                 config[:cookbook_path] = 'cookbooks'
                 config[:all] = true
@@ -77,12 +85,16 @@ module GoatOS
               extend Helper
               knife Chef::Knife::Bootstrap, h do |config|
                 config[:ssh_user] = options[:user]
-                config[:ssh_password] = options[:password]
+                if options[:password]
+                  config[:ssh_password] = options[:password]
+                  config[:use_sudo_password] = true
+                elsif options[:key]
+                  config[:identity_file] = options[:key]
+                end
                 config[:ssh_port] = 22
-                config[:chef_node_name] = options[:name]
+                config[:chef_node_name] = node_name
                 config[:distro] = 'chef-full'
                 config[:use_sudo] = true
-                config[:use_sudo_password] = true
               end
             end
           end
@@ -95,10 +107,12 @@ module GoatOS
                 f.write(key.private_key)
                 f.chmod(0600)
               end
-              set_node(options[:name]) do |node|
+              chef_node(node_name) do |node|
                 node.set['goatos']['sshkey'] = key.ssh_public_key
+                node.run_list.reset!
+                node.run_list << 'role[master]'
+                node.save
               end
-              set_node options[:name], run_list: 'role[master]'
             end
           end
 

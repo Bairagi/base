@@ -31,9 +31,21 @@ module GoatOS
       default: 'standalone',
       description: 'Type of bootstrap ("master" or "slave" or "standalone")'
 
+    option :key,
+      aliases: '-i',
+      description: 'SSH identity key'
+
+    option :password,
+      aliases: '-P',
+      description: 'Password for ssh user',
+      type: :boolean
+
     def bootstrap(cwd = Dir.pwd)
-      password = ask('SSH Password: '){ |q| q.echo = false }
-      opts = options.dup.merge(password: password)
+      opts = options.dup
+      if options[:password]
+        password = ask('SSH Password: '){ |q| q.echo = false }
+        opts.merge!(password: password)
+      end
       Dir.chdir(cwd) do
         case options[:type]
         when 'master'

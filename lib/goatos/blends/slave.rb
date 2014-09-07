@@ -4,10 +4,18 @@ module GoatOS
   module Blends
     class Slave
       def self.build( options )
+        host = options[:host]
+        node_name = options[:name]
+        ssh_options = {user: options[:user]}
+        if options[:password]
+          ssh_options[:password] = options[:password]
+        elsif options[:key]
+          ssh_options[:keys] = Array( options[:key] )
+        end
         Blender.blend 'building slave' do |sched|
           sched.config(:ruby, stdout: $stdout)
-          sched.config(:ssh, stdout: $stdout, user: options[:user], password: options[:password])
-          sched.members [ options[:host] ]
+          sched.config(:ssh, ssh_options.merge(stdout: $stdout))
+          sched.members [ host ]
 
           sched.ssh_task 'sudo apt-get update -y'
 
@@ -16,12 +24,16 @@ module GoatOS
               extend Helper
               knife Chef::Knife::Bootstrap, h do |config|
                 config[:ssh_user] = options[:user]
-                config[:ssh_password] = options[:password]
+                if options[:password]
+                  config[:ssh_password] = options[:password]
+                  config[:use_sudo_password] = true
+                elsif options[:key]
+                  config[:identity_file] = options[:key]
+                end
                 config[:ssh_port] = 22
-                config[:chef_node_name] = options[:name]
+                config[:chef_node_name] = node_name
                 config[:distro] = 'chef-full'
                 config[:use_sudo] = true
-                config[:use_sudo_password] = true
               end
             end
           end
@@ -29,7 +41,7 @@ module GoatOS
           sched.ruby_task 'set slave node intermediate run list' do
             execute do |h|
               extend Helper
-              set_node options[:name], run_list: 'role[install]'
+              set_chef_node_run_list(node_name, 'recipe[goatos::install]')
             end
           end
 
@@ -40,7 +52,7 @@ module GoatOS
           sched.ruby_task 'set slave nodes final run list' do
             execute do |h|
               extend Helper
-              set_node options[:name], run_list: 'role[slave]'
+              set_chef_node_run_list( node_name, 'role[slave]')
             end
           end
 

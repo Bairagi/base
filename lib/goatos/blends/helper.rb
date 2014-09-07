@@ -29,17 +29,18 @@ module GoatOS
         plugin.run
       end
 
-      def set_node(name, opts ={})
+      def chef_node(name)
         configure
         node = load_node(name)
-        if opts[:run_list]
-          node.run_list.reset!
-          Array(opts[:run_list]).each do |item|
-            node.run_list << item
-          end
-        end
         yield node if block_given?
-        node.save
+      end
+
+      def set_chef_node_run_list(name, run_list)
+        chef_node(name) do |node|
+          node.run_list.reset!
+          node.run_list << run_list
+          node.save
+        end
       end
 
       def load_node(name)
