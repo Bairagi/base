@@ -13,6 +13,10 @@ when 'bootstrap'
   cli.bootstrap
 when 'cleanse'
   cli.cleanse
+when 'lxc'
+  args = cli.cli_arguments.dup
+  args.shift
+  cli.lxc(args)
 else
   abort 'Unknown goatos command'
 end

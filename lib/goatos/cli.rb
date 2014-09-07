@@ -1,6 +1,7 @@
 require 'goatos/log'
 require 'highline/import'
 require 'goatos/builder'
+require 'goatos/blends/lxc'
 
 module GoatOS
   class CLI
@@ -11,14 +12,14 @@ module GoatOS
     option :target,
       short: '-t TARGET',
       long: '--target TARGET',
-      required: true,
+      required: false,
       description: 'Target host IP/FQDN'
 
 
     option :user,
       short: '-u USER',
       long: '--user USER',
-      required: true,
+      required: false,
       description: 'SSH user name'
 
     option :name,
@@ -46,6 +47,16 @@ module GoatOS
         else
           abort 'only master, slave or standalone bootstrap is valid'
         end
+      end
+    end
+
+    def lxc(args)
+      lxc_blender = Blends::Lxc.new
+      case args.first
+      when 'ls'
+        lxc_blender.ls
+      else
+        raise 'Unknown lxc blender command'
       end
     end
   end
