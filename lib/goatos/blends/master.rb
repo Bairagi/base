@@ -4,11 +4,10 @@ require 'sshkey'
 module GoatOS
   module Blends
     class Master
-      def self.build(config_file)
-        Blender.blend( 'building master', config_file) do |sched|
-          sched.config(:ssh, stdout: $stdout)
-          sched.members [ Blender::Configuration[:goatos]['target']]
-          goatos = Blender::Configuration[:goatos]
+      def self.build( options )
+        Blender.blend( 'building master') do |sched|
+          sched.config(:ssh, stdout: $stdout, user: options[:user], password: options[:password])
+          sched.members [ options[:host]]
 
           sched.ssh_task 'sudo apt-get update -y'
 
@@ -77,10 +76,10 @@ module GoatOS
             execute do |h|
               extend Helper
               knife Chef::Knife::Bootstrap, h do |config|
-                config[:ssh_user] = Blender::Configuration[:ssh]['user']
-                config[:ssh_password] = Blender::Configuration[:ssh]['password']
+                config[:ssh_user] = options[:user]
+                config[:ssh_password] = options[:password]
                 config[:ssh_port] = 22
-                config[:chef_node_name] = goatos['name']
+                config[:chef_node_name] = options[:name]
                 config[:distro] = 'chef-full'
                 config[:use_sudo] = true
                 config[:use_sudo_password] = true
@@ -96,10 +95,10 @@ module GoatOS
                 f.write(key.private_key)
                 f.chmod(0600)
               end
-              set_node(goatos['name']) do |node|
+              set_node(options[:name]) do |node|
                 node.set['goatos']['sshkey'] = key.ssh_public_key
               end
-              set_node goatos['name'], run_list: 'role[master]'
+              set_node options[:name], run_list: 'role[master]'
             end
           end
 

@@ -1,22 +1,8 @@
 #!/usr/bin/env ruby
 # vim: set ft=ruby:
 
-require 'mixlib/cli'
 require 'blender'
 require 'goatos/cli'
 
 
-cli = GoatOS::CLI.new
-cli.parse_options
-case cli.cli_arguments.first
-when 'bootstrap'
-  cli.bootstrap
-when 'cleanse'
-  cli.cleanse
-when 'lxc'
-  args = cli.cli_arguments.dup
-  args.shift
-  cli.lxc(args)
-else
-  abort 'Unknown goatos command'
-end
+GoatOS::CLI.start(ARGV)

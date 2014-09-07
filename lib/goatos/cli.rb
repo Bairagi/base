@@ -1,63 +1,53 @@
 require 'goatos/log'
 require 'highline/import'
 require 'goatos/builder'
-require 'goatos/blends/lxc'
+require 'goatos/cli/lxc'
+require 'thor'
+require 'thor/group'
 
 module GoatOS
-  class CLI
-
-    include Mixlib::CLI
+  class CLI < Thor
     include Builder
 
-    option :target,
-      short: '-t TARGET',
-      long: '--target TARGET',
-      required: false,
-      description: 'Target host IP/FQDN'
+    desc 'bootstrap -t HOSTNAME -u SSH_USER', 'Bootstrap a server'
 
+    option :host,
+      aliases: '-h',
+      required: true,
+      description: 'Host IP/FQDN'
 
     option :user,
-      short: '-u USER',
-      long: '--user USER',
-      required: false,
+      aliases: '-u',
+      default: ENV['USER'],
       description: 'SSH user name'
 
     option :name,
-      short: '-N NAME',
-      long: '--name NAME',
+      aliases: '-N',
       description: 'chef node name of the node (default sauron)',
       default: 'sauron'
 
-    option :bootstrap,
-      short: '-b master',
-      long: '--bootstrap master',
+    option :type,
+      aliases: '-T',
       default: 'standalone',
-      description: 'Bootstrap a node  (can be "master" or "slave" or "standalone")'
-
+      description: 'Type of bootstrap ("master" or "slave" or "standalone")'
 
     def bootstrap(cwd = Dir.pwd)
+      password = ask('SSH Password: '){ |q| q.echo = false }
+      opts = options.dup.merge(password: password)
       Dir.chdir(cwd) do
-        case config[:bootstrap]
+        case options[:type]
         when 'master'
-          build_master
+          build_master( opts )
         when 'slave'
-          build_slave
+          build_slave( opts )
         when 'standalone'
-          build_standalone
+          build_standalone( opts )
         else
           abort 'only master, slave or standalone bootstrap is valid'
         end
       end
     end
 
-    def lxc(args)
-      lxc_blender = Blends::Lxc.new
-      case args.first
-      when 'ls'
-        lxc_blender.ls
-      else
-        raise 'Unknown lxc blender command'
-      end
-    end
+    register GoatOS::CLI::Lxc, :lxc, 'lxc', 'Manage LXC lifecycle'
   end
 end
