@@ -38,6 +38,7 @@ module GoatOS
             node.run_list << item
           end
         end
+        yield node if block_given?
         node.save
       end
 

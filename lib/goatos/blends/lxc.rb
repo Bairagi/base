@@ -14,7 +14,7 @@ module GoatOS
         Blender.blend 'lxc', @config_file do |sched|
           sched.config(:chef, config_file: 'etc/knife.rb', attribute: @search_attr)
           sched.config(:ruby, stdout: $stdout)
-          sched.config(:ssh, stdout: $stdout, user: 'goatos', keys: ['keys/sauron.rsa'])
+          sched.config(:ssh, stdout: $stdout, user: 'goatos', keys: ['keys/goatos.rsa'])
           sched.members(sched.search(:chef, @search_term))
           sched.ssh_task command
         end

@@ -1,4 +1,5 @@
 require 'goatos/blends/helper'
+require 'sshkey'
 
 module GoatOS
   module Blends
@@ -87,9 +88,17 @@ module GoatOS
             end
           end
 
-          sched.ruby_task 'set master run list' do
+          sched.ruby_task 'mutate master' do
             execute do |h|
               extend Helper
+              key = SSHKey.generate
+              File.open('keys/goatos.rsa', 'w') do |f|
+                f.write(key.private_key)
+                f.chmod(0600)
+              end
+              set_node(goatos['name']) do |node|
+                node.set['goatos']['sshkey'] = key.ssh_public_key
+              end
               set_node goatos['name'], run_list: 'role[master]'
             end
           end

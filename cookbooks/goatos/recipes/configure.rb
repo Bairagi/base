@@ -1,6 +1,4 @@
 
-require 'sshkey'
-
 u_start, u_range = ::File.read('/etc/subuid').scan(/goatos:(\d+):(\d+)/).flatten
 g_start, g_range = ::File.read('/etc/subgid').scan(/goatos:(\d+):(\d+)/).flatten
 
@@ -17,13 +15,9 @@ template '/opt/goatos/.config/lxc/default.conf' do
   )
 end
 
-unless ::File.exist?('/opt/goatos/.ssh/authorized_keys')
-  k = SSHKey.generate
-  file '/opt/goatos/.ssh/authorized_keys' do
-    owner node['goatos']['user']
-    group node['goatos']['group']
-    mode 0400
-    content k.ssh_public_key
-  end
-  node.set['goatos']['sshkey'] = k.private_key
+file '/opt/goatos/.ssh/authorized_keys' do
+  owner node['goatos']['user']
+  group node['goatos']['group']
+  mode 0400
+  content search(:node, 'roles:master').first['goatos']['sshkey']
 end
