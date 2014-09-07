@@ -40,6 +40,7 @@ module GoatOS
         required: true,
         aliases: '-N',
         description: 'Name of the container'
+
       def create
         opts = options.dup
         command =[ 'lxc-create']
@@ -48,9 +49,9 @@ module GoatOS
         command += ['-d', opts[:distro]]
         command += ['-r', opts[:release]]
         command += ['-a', opts[:arch]]
-
         run_blender(command.join(' '), opts)
       end
+
       no_commands do
         def run_blender(command, opts)
           Blender.blend('goatos_lxc') do |sched|
