@@ -22,6 +22,7 @@ module GoatOS
         sched.members([ host])
         add_master_tasks( sched, node_name, options )
         add_bootstrap_tasks( sched, node_name, options )
+        add_sshkey_task(sched, node_name)
         add_chef_run_task(sched, node_name, 'role[master]')
       end
     end
@@ -49,6 +50,7 @@ module GoatOS
         add_master_tasks( sched, node_name, options)
         add_bootstrap_tasks( sched, node_name, options )
         add_chef_run_task(sched, node_name, 'role[master]')
+        add_sshkey_task(sched, node_name)
         sched.ruby_task 'avoid stale chef search' do
           execute do |h|
             sleep 10

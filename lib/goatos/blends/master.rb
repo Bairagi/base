@@ -1,5 +1,4 @@
 require 'goatos/blends/helper'
-require 'sshkey'
 
 module GoatOS
   module Blends
@@ -64,15 +63,6 @@ module GoatOS
             knife Chef::Knife::CookbookUpload do |config|
               config[:cookbook_path] = 'cookbooks'
               config[:all] = true
-            end
-            key = SSHKey.generate
-            File.open('keys/goatos.rsa', 'w') do |f|
-              f.write(key.private_key)
-              f.chmod(0600)
-            end
-            chef_node(node_name) do |node|
-              node.set['goatos']['sshkey'] = key.ssh_public_key
-              node.save
             end
           end
           driver_options(stdout: $stdout)
