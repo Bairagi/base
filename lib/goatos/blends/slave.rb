@@ -20,9 +20,9 @@ module GoatOS
           ignore_failure true
         end
 
-        sched.ruby_task 'sleep 30s' do
+        sched.ruby_task 'sleep 90s' do
           execute do |h|
-            sleep 30
+            sleep 90
           end
         end
       end

@@ -53,6 +53,7 @@ module GoatOS
                 validation_key File.join(cwd, 'keys/chef-validator.pem')
               EOF
             end
+            sleep 10
           end
         end
 
