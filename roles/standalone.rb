@@ -1,2 +1,2 @@
 name 'standalone'
-run_list ['role[master]', 'recipe[goatos::slave]']
+run_list ['role[master]', 'role[slave]']
