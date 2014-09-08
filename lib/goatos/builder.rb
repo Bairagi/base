@@ -46,7 +46,7 @@ module GoatOS
       Blender.blend( 'build_standalone') do |sched|
         sched.config(:ssh, ssh_options.merge(stdout: $stdout))
         sched.members([ host])
-        add_master_tasks( sched, options)
+        add_master_tasks( sched, node_name, options)
         add_bootstrap_tasks( sched, node_name, options )
         add_chef_run_task(sched, node_name, 'role[master]')
         sched.ruby_task 'avoid stale chef search' do
