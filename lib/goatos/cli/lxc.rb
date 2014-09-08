@@ -19,6 +19,47 @@ module GoatOS
         run_blender('lxc-ls --fancy', opts)
       end
 
+      desc 'lxc start', 'start a container'
+      option :name,
+        aliases: '-N',
+        required: true,
+        description: 'Name of the container to start'
+      def start
+        opts = options.dup
+        command = [ 'lxc-start', '-d' ]
+        command += ['-n', opts[:name]]
+        run_blender(command.join(' '), opts)
+      end
+
+      desc 'lxc stop', 'stop a container'
+      option :name,
+        aliases: '-N',
+        required: true,
+        description: 'Name of the container to stop'
+      def stop
+        opts = options.dup
+        command = [ 'lxc-stop' ]
+        command += ['-n', opts[:name]]
+        run_blender(command.join(' '), opts)
+      end
+
+      desc 'lxc destroy', 'destroy a container'
+      option :name,
+        aliases: '-N',
+        required: true,
+        description: 'Name of the container to destroy'
+      option :force,
+        aliases: '-f',
+        type: :boolean,
+        description: 'Force destroy (will shutdown a container if its running)'
+      def destroy
+        opts = options.dup
+        command = [ 'lxc-destroy' ]
+        command += ['-n', opts[:name]]
+        command << '-f' if opts[:force]
+        run_blender(command.join(' '), opts)
+      end
+
       desc 'lxc create', 'create a container'
       option :template,
         default: 'download',
