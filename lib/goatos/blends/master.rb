@@ -4,7 +4,7 @@ require 'sshkey'
 module GoatOS
   module Blends
     module Master
-      def add_master_tasks( sched, options )
+      def add_master_tasks( sched, node_name, options )
         sched.ssh_task 'sudo apt-get update -y'
 
         sched.ssh_task 'download chef server' do
