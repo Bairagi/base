@@ -1,2 +1,2 @@
 name 'slave'
-run_list ['recipe[goatos::configure]']
+run_list ['recipe[goatos::slave]']

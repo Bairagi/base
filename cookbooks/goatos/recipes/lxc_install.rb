@@ -5,6 +5,7 @@
   end
 
 end
+
 %w{ruby-lxc serfx sshkey}.each do |gem_name|
   gem_package gem_name do
     gem_binary '/opt/chef/embedded/bin/gem'

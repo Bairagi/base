@@ -13,15 +13,6 @@ template '/opt/goatos/.config/lxc/default.conf' do
     g_start: g_start,
     g_range: g_range
   )
-  notifies :run, 'ruby_block[move_cgroup]'
-end
-
-ruby_block 'move_cgroup' do
-  block do
-    extend GoatOS::RecipeHelper
-    move_pids
-  end
-  action :nothing
 end
 
 file '/opt/goatos/.ssh/authorized_keys' do

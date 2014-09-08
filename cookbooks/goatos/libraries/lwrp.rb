@@ -4,8 +4,7 @@ require 'chef/mixin/shell_out'
 
 module GoatOS
   module RecipeHelper
-
-    extend Chef::Mixin::ShellOut
+    include Chef::Mixin::ShellOut
 
     def subuid_info
       ::File.read('/etc/subuid').scan(/goatos:(\d+):(\d+)/).flatten
