@@ -1,6 +1,6 @@
-
-u_start, u_range = ::File.read('/etc/subuid').scan(/goatos:(\d+):(\d+)/).flatten
-g_start, g_range = ::File.read('/etc/subgid').scan(/goatos:(\d+):(\d+)/).flatten
+extend GoatOS::RecipeHelper
+u_start, u_range = subuid_info
+g_start, g_range = subgid_info
 
 template '/opt/goatos/.config/lxc/default.conf' do
   owner node['goatos']['user']
@@ -13,6 +13,15 @@ template '/opt/goatos/.config/lxc/default.conf' do
     g_start: g_start,
     g_range: g_range
   )
+  notifies :run, 'ruby_block[move_cgroup]'
+end
+
+ruby_block 'move_cgroup' do
+  block do
+    extend GoatOS::RecipeHelper
+    move_pids
+  end
+  action :nothing
 end
 
 file '/opt/goatos/.ssh/authorized_keys' do
