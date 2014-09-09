@@ -21,20 +21,20 @@ end
 %w{
   /opt/goatos/bin
   /opt/goatos/.config
-  /opt/goatos/.config/lxc
   /opt/goatos/.local
   /opt/goatos/.local/share
-  /opt/goatos/.local/share/lxc
-  /opt/goatos/.local/share/lxcsnaps
   /opt/goatos/.cache
-  /opt/goatos/.cache/lxc
   /opt/goatos/.ssh
   /opt/goatos/lxc.conf.d
+  /opt/goatos/.config/lxc
+  /opt/goatos/.local/share/lxc
+  /opt/goatos/.local/share/lxcsnaps
+  /opt/goatos/.cache/lxc
   }.each do |dir|
   directory dir do
     user node['goatos']['user']
     group node['goatos']['group']
-    mode 0750
+    mode 0775
   end
 end
 
