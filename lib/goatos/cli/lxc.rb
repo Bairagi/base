@@ -61,26 +61,34 @@ module GoatOS
       end
 
       desc 'lxc create', 'create a container'
+
       option :template,
         default: 'download',
         aliases: '-t',
         description: 'Template for building rootfs'
+
       option :arch,
         default: 'amd64',
         aliases: '-a',
         description: 'ARCH for the lxc'
+
       option :distro,
         default: 'ubuntu',
         aliases: '-d',
         description: 'Disro type to be used with download template'
+
       option :release,
         default: 'trusty',
         aliases: '-r',
         description: 'Release of a distribution (e.g lucid, precise, trusty for ubuntu)'
+
       option :name,
         required: true,
         aliases: '-N',
         description: 'Name of the container'
+
+      option :expose,
+        description: 'Network service this container will expose ct_port:protocol:host_port'
 
       def create
         opts = options.dup
@@ -90,17 +98,34 @@ module GoatOS
         command += ['-d', opts[:distro]]
         command += ['-r', opts[:release]]
         command += ['-a', opts[:arch]]
-        run_blender(command.join(' '), opts)
+        commands = [ command.join(' ') ]
+        if options[:expose]
+          cmd = "/opt/goatos/bin/goatos-meta expose"
+          cmd << " #{options[:name]} #{options[:expose]}"
+          commands << cmd
+        end
+        run_blender( commands, opts)
+      end
+
+      desc 'meta', 'Show lxc related metadata'
+      def meta
+        command = '/opt/goatos/bin/goat-meta show'
+        run_blender(
+          command,
+          options
+        )
       end
 
       no_commands do
-        def run_blender(command, opts)
+        def run_blender(commands, opts)
           Blender.blend('goatos_lxc') do |sched|
             sched.config(:chef, config_file: 'etc/knife.rb', attribute: opts[:attribute])
             sched.config(:ruby, stdout: $stdout)
             sched.config(:ssh, stdout: $stdout, user: 'goatos', keys: ['keys/goatos.rsa'])
             sched.members(sched.search(:chef, opts[:filter]))
-            sched.ssh_task command
+            Array(commands).each do |cmd|
+              sched.ssh_task cmd
+            end
           end
         end
       end
