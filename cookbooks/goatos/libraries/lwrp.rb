@@ -79,14 +79,15 @@ class Chef::Provider::HaproxyConfig < Chef::Provider::LWRPBase
     require 'lxc'
     extend GoatOS::ProviderHelper
     listeners =  compute_listeners
-    return if listeners.empty? and new_resource.skip_empty
-    template new_resource.path do
-      action :create
-      mode 0644
-      owner 'root'
-      group 'root'
-      source 'haproxy.cfg.erb'
-      variables(listeners: listeners)
+    unless listeners.empty? and new_resource.skip_empty
+      template new_resource.path do
+        action :create
+        mode 0644
+        owner 'root'
+        group 'root'
+        source 'haproxy.cfg.erb'
+        variables(listeners: listeners)
+      end
     end
   end
 
