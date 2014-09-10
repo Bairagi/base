@@ -1,5 +1,5 @@
 ### Description
-
+GoatOS is a collection of infrastructure automation tools.
 `GoatOS Base` is a provides distributed LXC management for the GoatOS project.
 `GoatOS Base` allows user to configure and manage ubuntu 14.04 instances with
 Chef and perform distributed tasks using Blender.
@@ -48,7 +48,23 @@ To create a container, use the `goatos lxc create` command.
 ```sh
 bundle exec goatos lxc create -N ct01
 ```
-This will create an ubunu 14.04 container.
+This will create an ubunu 14.04 container. Additional flags can be used to create container
+specify other distro, release, archtecture. You can specify network services that you want
+to expose from the container using the `--expose` flag.
+ 
+```sh
+bundle exec goatos lxc create -N ct01 --expose 22:tcp:2201
+```
+Above command will save the '22:tcp:2201' as metadata for the container. This metadata is
+processed by chef runs that controls the host running container to expose outside using haproxy.
+The string `22:tcp:2201` express the intent to expose port 22 (SSH i.e) of container on port
+2201 on the host. Following goatos command will propagate these changes via chef.
+
+```sh
+bundle exec goatos run-chef -u USER -i key.rsa
+```
+You should be able to ssh into one of the container directly by `ssh -p 2201 HOST_IP`. Note,
+the default container have a prebaked user with name `ubuntu` and password `ubuntu`
 
 
 For multinode cluster, you can bootstrap the master with `-T master` option,
