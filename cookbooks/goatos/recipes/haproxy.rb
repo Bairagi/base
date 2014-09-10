@@ -1,14 +1,7 @@
 package 'haproxy'
 
-file '/etc/default/haproxy' do
-  content 'ENABLED=1'
-  mode 0644
-  owner 'root'
-  group 'root'
-  notifies :restart, 'service[haproxy]'
-end
-
 haproxy_config '/etc/haproxy/haproxy.cfg' do
+  environment_file '/etc/default/haproxy'
   action :create
   notifies :reload, 'service[haproxy]'
 end

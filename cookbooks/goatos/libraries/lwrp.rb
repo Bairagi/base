@@ -64,7 +64,8 @@ class Chef::Resource::HaproxyConfig < Chef::Resource::LWRPBase
   default_action :create
   actions :create, :delete
   attribute :path, kind_of: String, name_attribute: true, required: true
-  attribute :skip_empty, kind_of: [TrueClass, FalseClass], default: true
+  attribute :disable_on_empty, kind_of: [TrueClass, FalseClass], default: true
+  attribute :environment_file, kind_of: String, default: '/etc/default/haproxy'
 end
 
 class Chef::Provider::HaproxyConfig < Chef::Provider::LWRPBase
@@ -78,25 +79,38 @@ class Chef::Provider::HaproxyConfig < Chef::Provider::LWRPBase
   action :create do
     require 'lxc'
     extend GoatOS::ProviderHelper
+
     listeners =  compute_listeners
-    unless listeners.empty? and new_resource.skip_empty
-      template new_resource.path do
-        action :create
-        mode 0644
-        owner 'root'
-        group 'root'
-        source 'haproxy.cfg.erb'
-        variables(listeners: listeners)
-      end
+    enabled = '1'
+
+    if listeners.empty? and new_resource.disable_on_empty
+      enabled = '0'
+    end
+
+    file new_resource.environment_file do
+      content "ENABLED=#{enabled}\n"
+      mode 0644
+      owner 'root'
+      group 'root'
+    end
+
+    template new_resource.path do
+      action :create
+      mode 0644
+      owner 'root'
+      group 'root'
+      source 'haproxy.cfg.erb'
+      variables(listeners: listeners)
     end
   end
 
   action :delete do
     file new_resource.path do
       action :delete
-      mode 0644
-      owner 'root'
-      group 'root'
+    end
+
+    file new_resource.environment_file do
+      action :delete
     end
   end
 end
