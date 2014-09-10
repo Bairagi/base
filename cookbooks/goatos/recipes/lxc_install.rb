@@ -1,5 +1,5 @@
 
-%w{ liblxc1 lxc lxc-dev lxc-templates python3-lxc cgmanager-utils build-essential haproxy}.each do |pkg|
+%w{ liblxc1 lxc lxc-dev lxc-templates python3-lxc cgmanager-utils build-essential}.each do |pkg|
   package pkg do
     action :install
   end

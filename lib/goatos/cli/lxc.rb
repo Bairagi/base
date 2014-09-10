@@ -109,7 +109,7 @@ module GoatOS
 
       desc 'meta', 'Show lxc related metadata'
       def meta
-        command = '/opt/goatos/bin/goat-meta show'
+        command = '/opt/goatos/bin/goatos-meta show'
         run_blender(
           command,
           options
