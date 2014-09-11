@@ -90,21 +90,33 @@ module GoatOS
       option :expose,
         description: 'Network service this container will expose ct_port:protocol:host_port'
 
+      option :clone,
+        type: :string,
+        description: 'clone a stopped container'
+
       def create
         opts = options.dup
-        command =[ 'lxc-create']
-        command += ['-t', opts[:template]]
-        command += ['-n', opts[:name], '--']
-        command += ['-d', opts[:distro]]
-        command += ['-r', opts[:release]]
-        command += ['-a', opts[:arch]]
-        commands = [ command.join(' ') ]
+        commands = []
+        if options[:clone]
+          command = [ 'lxc-clone' ]
+          command += [ '-s', '-B', 'overlayfs' ]
+          command += [ opts[:clone], opts[:name] ]
+          commands = [ command.join(' ') ]
+        else
+          command = [ 'lxc-create']
+          command += ['-t', opts[:template]]
+          command += ['-n', opts[:name], '--']
+          command += ['-d', opts[:distro]]
+          command += ['-r', opts[:release]]
+          command += ['-a', opts[:arch]]
+          commands << command.join(' ')
+        end
         if options[:expose]
           cmd = "/opt/goatos/bin/goatos-meta expose"
           cmd << " #{options[:name]} #{options[:expose]}"
           commands << cmd
         end
-        run_blender( commands, opts)
+        run_blender( commands, opts )
       end
 
       desc 'meta', 'Show lxc related metadata'

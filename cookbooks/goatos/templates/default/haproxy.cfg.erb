@@ -9,9 +9,9 @@ global
 defaults
   log global
   option  dontlognull
-        contimeout 5000
-        clitimeout 50000
-        srvtimeout 50000
+  contimeout 5000
+  clitimeout 50000
+  srvtimeout 50000
 
 <% @listeners.each do |listener| %>
 listen <%= listener.name.upcase %> :<%= listener.listen %>

@@ -22,9 +22,9 @@ PATH
   remote: .
   specs:
     goatos-base (0.0.1)
-      blender
       blender-chef
       chef
+      pd-blender
       sshkey
       thor
 
@@ -142,6 +142,13 @@ GEM
     parser (2.2.0.pre.4)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
+    pd-blender (0.0.1)
+      highline
+      mixlib-log
+      mixlib-shellout
+      net-ssh
+      rufus-scheduler
+      thor
     plist (3.1.0)
     powerpack (0.0.9)
     pry (0.10.1)

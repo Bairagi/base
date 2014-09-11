@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'thor'
   spec.add_dependency 'chef'
-  spec.add_dependency 'blender'
+  spec.add_dependency 'pd-blender'
   spec.add_dependency 'blender-chef'
   spec.add_dependency 'sshkey'
 
