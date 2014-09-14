@@ -11,7 +11,6 @@ module GoatOS
 
     register GoatOS::CLI::Lxc, :lxc, 'lxc', 'Manage LXC lifecycle'
 
-
     desc 'bootstrap -t HOSTNAME -u SSH_USER', 'Bootstrap a server'
 
     option :host,
@@ -27,7 +26,7 @@ module GoatOS
     option :type,
       aliases: '-T',
       default: 'standalone',
-      description: 'Type of bootstrap ("master" or "slave" or "standalone")'
+      description: 'Type of bootstrap ("master", "slave", "standalone" or "lxc")'
 
     option :user,
       aliases: '-u',
@@ -43,6 +42,23 @@ module GoatOS
       description: 'Password for ssh user',
       type: :boolean
 
+    option :ssh_port,
+      aliases: '-p',
+      description: 'SSH Port',
+      type: :string,
+      default: '22'
+
+    option :environment,
+      aliases: '-E',
+      description: 'Chef environment',
+      type: :string,
+      default: '_default'
+
+    option :run_list,
+      aliases: '-r',
+      description: 'Chef run list',
+      type: :string
+
     def bootstrap(cwd = Dir.pwd)
       opts = options.dup
       if options[:password]
@@ -57,6 +73,8 @@ module GoatOS
           build_slave( opts )
         when 'standalone'
           build_standalone( opts )
+        when 'lxc'
+          build_lxc( opts )
         else
           abort 'only master, slave or standalone bootstrap is valid'
         end
@@ -144,6 +162,11 @@ module GoatOS
 
     desc 'init', 'Create GoatOS directory structure'
     def init
+      %w{cookbooks roles environments etc}.each do |dir|
+        unless File.exist?(dir)
+          Dir.mkdir(dir)
+        end
+      end
     end
 
     no_commands do

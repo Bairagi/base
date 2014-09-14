@@ -6,9 +6,10 @@ module GoatOS
     module Bootstrapper
 
       def add_bootstrap_tasks(sched, node_name, options)
-        sched.ruby_task 'bootstrap' do
+        sched.ruby_task "bootstrap #{node_name}" do
           execute do |h|
             extend Helper
+            puts 'Yolo'
             knife Chef::Knife::Bootstrap, h do |config|
               config[:ssh_user] = options[:user]
               if options[:password]
@@ -17,7 +18,7 @@ module GoatOS
               elsif options[:key]
                 config[:identity_file] = options[:key]
               end
-              config[:ssh_port] = 22
+              config[:ssh_port] = options[:ssh_port].to_i
               config[:chef_node_name] = node_name
               config[:distro] = 'chef-full'
               config[:use_sudo] = true

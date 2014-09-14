@@ -27,6 +27,20 @@ module GoatOS
       end
     end
 
+    def build_lxc( options )
+      ssh_options = ssh_opts(options)
+      host = options[:host]
+      node_name = options[:name]
+      Blender.blend( 'build_lxc') do |sched|
+        sched.config(:ssh, ssh_options.merge(stdout: $stdout))
+        sched.config(:ruby, stdout: $stdout)
+        sched.members([ host])
+        sched.ssh_task 'sudo apt-get update  -y'
+        sched.ssh_task 'sudo apt-get install wget curl libwww-perl  -y'
+        add_bootstrap_tasks( sched, node_name, options )
+      end
+    end
+
     def build_slave( options )
       ssh_options = ssh_opts(options)
       host = options[:host]
@@ -62,7 +76,7 @@ module GoatOS
     end
 
     def ssh_opts(options)
-      ssh_options = {user: options[:user]}
+      ssh_options = {user: options[:user], port: options[:ssh_port]}
       if options[:password]
         ssh_options[:password] = options[:password]
       elsif options[:key]
