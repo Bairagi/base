@@ -44,9 +44,11 @@ def container_list
   data = {}
   LXC.list_containers.each do |name|
     ct = LXC::Container.new(name)
-    data[name] = {
-      'ipaddress' => ct.ip_addresses.first
-    }
+    if ct.running?
+      data[name] = {
+        'ipaddress' => ct.ip_addresses.first
+      }
+    end
   end
   data
 end
