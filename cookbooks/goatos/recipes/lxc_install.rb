@@ -6,7 +6,7 @@
 
 end
 
-%w{ruby-lxc serfx sshkey}.each do |gem_name|
+%w{ruby-lxc serfx sshkey thor}.each do |gem_name|
   gem_package gem_name do
     gem_binary '/opt/chef/embedded/bin/gem'
   end
@@ -46,7 +46,7 @@ file '/etc/lxc/lxc-usernet' do
 end
 
 cookbook_file '/opt/goatos/bin/goatos-meta' do
-  source 'goat-meta.rb'
+  source 'goatos-meta.rb'
   mode 0700
   user node['goatos']['user']
   group node['goatos']['group']

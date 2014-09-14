@@ -29,27 +29,16 @@ module GoatOS
       '/opt/goatos/goats.json'
     end
 
-    def container_metadata
-      if File.exists?(state_file)
-        collection = JSON.parse(File.read(state_file))
-      else
-        collection = { 'containers'=> {}, 'last_updated' => nil }
-      end
-    end
-
     def compute_listeners
+      return [] unless File.exists?(state_file)
       listeners = []
-      metadata = container_metadata
+      metadata = JSON.parse(File.read(state_file))
       metadata['containers'].each do |n, meta|
         ct = LXC::Container.new(n, '/opt/goatos/.local/share/lxc')
-        if ct.defined?
-          if ct.running?
-            port, mode, listen = meta['expose'].split(':')
-            config = Listener.new(n, listen, port, mode, ct.ip_addresses.first)
-            listeners << config
-          else
-            Chef::Log.warn("LXC #{n} is stopped, cant fetch its IP")
-          end
+        if ct.running?
+          port, mode, listen = meta['expose'].split(':')
+          config = Listener.new(n, listen, port, mode, ct.ip_addresses.first)
+          listeners << config
         else
           Chef::Log.warn("LXC #{n} is absent, but its metadata is present")
         end

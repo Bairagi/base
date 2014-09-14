@@ -119,9 +119,21 @@ module GoatOS
         run_blender( commands, opts )
       end
 
-      desc 'meta', 'Show lxc related metadata'
+      desc 'meta ', 'Show lxc related metadata'
+      option :container,
+        type: :string,
+        description: 'Show metadata pertaining to only that container'
+      option :format,
+        type: :string,
+        description: 'Output format, can be text or json',
+        default: 'json'
       def meta
-        command = '/opt/goatos/bin/goatos-meta show'
+        if options[:container]
+        command = "/opt/goatos/bin/goatos-meta show #{options[:container]}"
+        else
+          command = '/opt/goatos/bin/goatos-meta list'
+        end
+        command << " -F #{options[:format]}"
         run_blender(
           command,
           options

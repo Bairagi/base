@@ -142,6 +142,10 @@ module GoatOS
       )
     end
 
+    desc 'init', 'Create GoatOS directory structure'
+    def init
+    end
+
     no_commands do
       def run_blender(command, ssh_opts, chef_opts)
         Blender.blend('goatos_run_chef') do |sched|
