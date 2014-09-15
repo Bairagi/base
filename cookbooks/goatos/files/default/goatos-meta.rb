@@ -3,8 +3,26 @@
 require 'lxc'
 require 'json'
 require 'thor'
+require 'mixlib/shellout'
+require 'chef/application/lxc'
+
 module GoatOS
   module Meta
+    CtMetadata = Struct.new(
+      :name,
+      :template,
+      :release,
+      :arch,
+      :distro,
+      :expose,
+      :chef_recipe
+    ) do
+      if RUBY_VERSION < '2.1.1'
+        def to_h
+          Hash[ each_pair.to_a ]
+        end
+      end
+    end
     class JSONStore
       attr_reader :state_file
       def initialize(state_file = '/opt/goatos/goats.json')
@@ -15,38 +33,37 @@ module GoatOS
         @metadata ||= fetch_metadata
       end
       def fetch_metadata
+        collection = { 'containers'=> {}, 'last_updated' => nil }
         if File.exists?(state_file)
-          collection = JSON.parse(File.read(state_file))
-        else
-          collection = { 'containers'=> {}, 'last_updated' => nil }
+          data = JSON.parse(File.read(state_file))
+          data['containers'].each do |name, meta|
+            collection['containers'][name] = CtMetadata.new(*meta.values)
+          end
+          collection['last_updated'] = data['last_updated']
         end
+        collection
       end
-      def add(name, key, value)
-        update!(name, key, value)
-      end
-      def expose(name, slp)
-        add(name, 'expose', slp)
-      end
-      def update!(name, key, value)
-        if metadata['containers'].key?(name)
-          metadata['containers'][name][key] = value
-        else
-          metadata['containers'][name] = { key => value }
+      def add(name, meta)
+        unless get(name).nil?
+          raise RuntimeError, "Container '#{name}' already present"
         end
-        metadata['last_updated'] = Time.now
+        metadata['containers'][name]= meta
+        write_to_disk
+      end
+
+      def write_to_disk
+        cts = {'containers'=> {}}
+        metadata['containers'].each do |n, meta|
+          cts['containers'][n] = meta.to_h
+        end
+        cts['last_updated'] = Time.now
         File.open(state_file, 'w') do |f|
-          f.write(JSON.pretty_generate(metadata))
+          f.write(JSON.pretty_generate(cts))
         end
       end
-      def containers
-        LXC.list_containers.inject({}) do |data, name|
-          ct = LXC::Container.new(name)
-          data[name] = { 'ipaddress' => ct.ip_addresses.first } if ct.running?
-        end
-        data
-      end
-      def show(name)
-        metadata['containers']['name']
+
+      def get(name)
+        metadata['containers'][name]
       end
       def list
         metadata['containers']
@@ -58,6 +75,35 @@ module GoatOS
         aliases: '-F',
         description: 'Format output(test or json)',
         default: 'text'
+
+      desc 'converge CONTAINER', 'Converge a chef recipe inside the container'
+      def converge(container)
+        store = JSONStore.new
+        recipe = store.get(container).chef_recipe
+        recipe_path = "/opt/goatos/recipes/#{recipe}.rb"
+        recipe_text = File.read(recipe_path)
+        Chef::Config[:solo] = true
+        ct = ::LXC::Container.new(container)
+        Chef::Log.init(STDOUT)
+        Chef::Log.level = :info
+        client = Class.new(Chef::Client) do
+          def run_ohai
+            ohai.run_plugins
+          end
+        end.new
+        client.ohai.load_plugins
+        ct.execute do
+          client.run_ohai
+          client.load_node
+          client.build_node
+          run_context = Chef::RunContext.new(client.node, {}, client.events)
+          recipe = Chef::Recipe.new('goatos_lxc', recipe, run_context)
+          recipe.instance_eval(recipe_text, recipe_path, 1)
+          runner = Chef::Runner.new(run_context)
+          runner.converge
+        end
+      end
+
       desc 'list', 'list all the metadata'
       def list
         store = JSONStore.new
@@ -75,7 +121,7 @@ module GoatOS
       desc 'show NAME', 'show metadata of a single container'
       def show(name)
         store = JSONStore.new
-        meta = store.list[name]
+        meta = store.get(name)
         case options[:format]
         when 'text'
           puts "#{name} | Metadata: #{meta.inspect}"
@@ -84,10 +130,41 @@ module GoatOS
         end
       end
 
-      desc 'expose NAME SLP', 'Expose container port via host'
-      def expose(name, slp)
+      desc 'add NAME', 'Add a container info in the metadata'
+      option :template,
+        default: 'download',
+        aliases: '-t',
+        description: 'Template for building rootfs'
+      option :arch,
+        default: 'amd64',
+        aliases: '-a',
+        description: 'ARCH for the lxc'
+      option :distro,
+        default: 'ubuntu',
+        aliases: '-d',
+        description: 'Disro type to be used with download template'
+      option :chef_recipe,
+        aliases: '-R',
+        description: 'A chef recipe that will be executed upon container start'
+      option :release,
+        default: 'trusty',
+        aliases: '-r',
+        description: 'Release of a distribution (e.g lucid, precise, trusty for ubuntu)'
+      option :expose,
+        aliases: '-e',
+        description: 'Expose container port'
+      def add(name)
         store = JSONStore.new
-        store.expose(name, slp)
+        meta = CtMetadata.new(
+          name,
+          options[:template],
+          options[:release],
+          options[:arch],
+          options[:distro],
+          options[:expose],
+          options[:chef_recipe]
+        )
+        store.add(name, meta)
       end
     end
   end

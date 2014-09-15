@@ -26,7 +26,7 @@ module GoatOS
     option :type,
       aliases: '-T',
       default: 'standalone',
-      description: 'Type of bootstrap ("master", "slave", "standalone" or "lxc")'
+      description: 'Type of bootstrap ("master", "slave" or "standalone")'
 
     option :user,
       aliases: '-u',
@@ -73,8 +73,6 @@ module GoatOS
           build_slave( opts )
         when 'standalone'
           build_standalone( opts )
-        when 'lxc'
-          build_lxc( opts )
         else
           abort 'only master, slave or standalone bootstrap is valid'
         end

@@ -6,7 +6,7 @@
 
 end
 
-%w{ruby-lxc serfx sshkey thor}.each do |gem_name|
+%w{ruby-lxc serfx sshkey thor chef-lxc}.each do |gem_name|
   gem_package gem_name do
     gem_binary '/opt/chef/embedded/bin/gem'
   end
@@ -26,6 +26,7 @@ end
   /opt/goatos/.cache
   /opt/goatos/.ssh
   /opt/goatos/lxc.conf.d
+  /opt/goatos/recipes
   /opt/goatos/.config/lxc
   /opt/goatos/.local/share/lxc
   /opt/goatos/.local/share/lxcsnaps
@@ -48,6 +49,13 @@ end
 cookbook_file '/opt/goatos/bin/goatos-meta' do
   source 'goatos-meta.rb'
   mode 0700
+  user node['goatos']['user']
+  group node['goatos']['group']
+end
+
+cookbook_file '/opt/goatos/recipes/test.rb' do
+  source 'test.rb'
+  mode 0644
   user node['goatos']['user']
   group node['goatos']['group']
 end

@@ -26,9 +26,10 @@ module GoatOS
         description: 'Name of the container to start'
       def start
         opts = options.dup
-        command = [ 'lxc-start', '-d' ]
-        command += ['-n', opts[:name]]
-        run_blender(command.join(' '), opts)
+        commands = []
+        commands << "lxc-start -d -n #{opts[:name]}"
+        commands << "/opt/goatos/bin/goatos-meta converge #{opts[:name]}"
+        run_blender(commands, opts)
       end
 
       desc 'lxc stop', 'stop a container'
@@ -61,39 +62,35 @@ module GoatOS
       end
 
       desc 'lxc create', 'create a container'
-
       option :template,
         default: 'download',
         aliases: '-t',
         description: 'Template for building rootfs'
-
       option :arch,
         default: 'amd64',
         aliases: '-a',
         description: 'ARCH for the lxc'
-
       option :distro,
         default: 'ubuntu',
         aliases: '-d',
         description: 'Disro type to be used with download template'
-
       option :release,
         default: 'trusty',
         aliases: '-r',
         description: 'Release of a distribution (e.g lucid, precise, trusty for ubuntu)'
-
       option :name,
         required: true,
         aliases: '-N',
         description: 'Name of the container'
-
       option :expose,
         description: 'Network service this container will expose ct_port:protocol:host_port'
-
       option :clone,
         type: :string,
         description: 'clone a stopped container'
-
+      option :chef_recipe,
+        type: :string,
+        aliases: '-R',
+        description: 'An chef recipe that will executed upon container start'
       def create
         opts = options.dup
         commands = []
@@ -111,11 +108,18 @@ module GoatOS
           command += ['-a', opts[:arch]]
           commands << command.join(' ')
         end
-        if options[:expose]
-          cmd = "/opt/goatos/bin/goatos-meta expose"
-          cmd << " #{options[:name]} #{options[:expose]}"
-          commands << cmd
+        command = [ "/opt/goatos/bin/goatos-meta add #{options[:name]}" ]
+        command += ['-t', opts[:template]]
+        command += ['-d', opts[:distro]]
+        command += ['-r', opts[:release]]
+        command += ['-a', opts[:arch]]
+        if opts[:chef_recipe]
+          command += ['-R', opts[:chef_recipe]]
         end
+        if options[:expose]
+          command += ['-e', options[:expose]]
+        end
+        commands << command.join(' ')
         run_blender( commands, opts )
       end
 
@@ -129,7 +133,7 @@ module GoatOS
         default: 'json'
       def meta
         if options[:container]
-        command = "/opt/goatos/bin/goatos-meta show #{options[:container]}"
+          command = "/opt/goatos/bin/goatos-meta show #{options[:container]}"
         else
           command = '/opt/goatos/bin/goatos-meta list'
         end
