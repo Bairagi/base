@@ -159,10 +159,18 @@ module GoatOS
     end
 
     desc 'init', 'Create GoatOS directory structure'
-    def init
-      %w{cookbooks roles environments etc}.each do |dir|
-        unless File.exist?(dir)
-          Dir.mkdir(dir)
+    def init(cwd = Dir.pwd)
+      Dir.chdir(cwd) do
+        %w{cookbooks keys roles environments etc}.each do |dir|
+          unless File.exist?(dir)
+            Dir.mkdir(dir)
+          end
+        end
+        Dir["#{File.expand_path('../../../roles', __FILE__)}/*.rb"].each do |f|
+          FileUtils.cp( f, "roles/#{File.basename(f)}")
+        end
+        Dir["#{File.expand_path('../../../cookbooks', __FILE__)}/*"].each do |f|
+          FileUtils.cp_r( f, "cookbooks/#{File.basename(f)}")
         end
       end
     end
