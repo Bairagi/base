@@ -55,10 +55,10 @@ module GoatOS
         description: 'Force destroy (will shutdown a container if its running)'
       def destroy
         opts = options.dup
-        command = [ 'lxc-destroy' ]
-        command += ['-n', opts[:name]]
-        command << '-f' if opts[:force]
-        run_blender(command.join(' '), opts)
+        commands = [ "lxc-destroy -n #{opts[:name]}" ]
+        commands.first << ' -f' if opts[:force]
+        commands <<  "/opt/goatos/bin/goatos-meta delete #{options[:name]}"
+        run_blender(commands, opts)
       end
 
       desc 'lxc create', 'create a container'

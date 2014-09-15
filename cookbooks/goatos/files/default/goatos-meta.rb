@@ -65,6 +65,10 @@ module GoatOS
       def get(name)
         metadata['containers'][name]
       end
+      def delete(name)
+        metadata['containers'].delete(name)
+        write_to_disk
+      end
       def list
         metadata['containers']
       end
@@ -126,7 +130,7 @@ module GoatOS
         when 'text'
           puts "#{name} | Metadata: #{meta.inspect}"
         when 'json'
-          puts JSON.pretty_generate(meta)
+          puts JSON.pretty_generate(meta.to_h)
         end
       end
 
@@ -165,6 +169,11 @@ module GoatOS
           options[:chef_recipe]
         )
         store.add(name, meta)
+      end
+      desc 'delte CONTAINER_NAME', 'delete container meta data'
+      def delete(name)
+        store = JSONStore.new
+        store.delete(name)
       end
     end
   end
