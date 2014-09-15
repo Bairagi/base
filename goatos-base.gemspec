@@ -6,10 +6,10 @@ require 'goatos/version'
 Gem::Specification.new do |spec|
   spec.name          = 'goatos-base'
   spec.version       = GoatOS::VERSION.dup
-  spec.authors       = ['Rnjib Dey']
+  spec.authors       = ['Ranjib Dey']
   spec.email         = ['dey.ranjib@gmail.com']
-  spec.summary       = %q{LXC automation suite}
-  spec.description   = %q{Automate LXC with Chef}
+  spec.summary       = %q{Distributed LXC automation suite using Chef and Blender}
+  spec.description   = %q{Deploy and manage multi node LXC installation using Chef and Blender}
   spec.homepage      = 'https://github.com/goatos/base'
   spec.license       = 'Apache'
 

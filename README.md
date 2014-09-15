@@ -1,19 +1,25 @@
 ### Description
-GoatOS is a collection of infrastructure automation tools.
-`GoatOS Base` is a provides distributed LXC management for the GoatOS project.
-`GoatOS Base` allows user to configure and manage ubuntu 14.04 instances with
-Chef and perform distributed tasks using Blender.
+GoatOS is a distributed LXC automation suite. It uses Chef for configuration
+managemenbt and Blender for orchestration.
 
-### Setup
-clone the GoatOS base repo, and run bundle install
+With GoatOS you can set up ubuntu 14.04 servers to run unprivileged LXC
+containers. GoatOS automates
+- bootstrapping/provisioning LXC hosts, chef servers etc (using SSH).
+- container life cycle management (create, start, stop, destroy)
+- exposing network services from containers to outside (using haproxy)
+- customizing container with familiar chef DSL
+
+### Installation
 ```sh
-git clone https://github.com/GoatOS/base.git goatos_base
-cd goatos_base
-bundle install --path .bundle
+gem install goatos-base
 ```
 
 ### Usage
-Typical GoatOS clusters are composed of one master and multiple slave. Master
+#### Setup
+```sh
+goatos init
+```
+Typical GoatOS clusters are composed of one master and multiple slaves. Master
 hosts chef server, which act as configuration artifact repository and metadata
 source, while the slave nodes run unprivileged LXC instances. Master and slave
 host customization can be done via chef, while container management is done on
@@ -24,7 +30,7 @@ this create a virtual box vm (or ec2 instance) with ubuntu 14.04. Create an user
 with sudo access and bootstrap the instance with following command:
 
 ```sh
-bundle exec goatos bootstrap -h 192.168.1.49 -u ubuntu -i ssh_key.rsa
+goatos bootstrap -h 192.168.1.49 -u ubuntu -i ssh_key.rsa
 ```
 
 Note: GoatOS installer will ask for ssh password when `-P` flag is passed, instead of the `-i` flag.
@@ -40,20 +46,20 @@ in `etc` directory for chef (you invoke all regular knife commands by passing
 Next you can check conatiners present on the goatos fleet like this:
 
 ```sh
-bundle exec goatos lxc ls
+goatos lxc ls
 ```
 This will use the ssh credentials (`goatos` user and an rsa key) generate via bootstrap.
 
 To create a container, use the `goatos lxc create` command.
 ```sh
-bundle exec goatos lxc create -N ct01
+goatos lxc create -N ct01
 ```
 This will create an ubunu 14.04 container. Additional flags can be used to create container
 specify other distro, release, archtecture. You can specify network services that you want
 to expose from the container using the `--expose` flag.
  
 ```sh
-bundle exec goatos lxc create -N ct01 --expose 22:tcp:2201
+goatos lxc create -N ct01 --expose 22:tcp:2201
 ```
 Above command will save the '22:tcp:2201' as metadata for the container. This metadata is
 processed by chef runs that controls the host running container to expose outside using haproxy.
@@ -73,3 +79,14 @@ in the target host. While rest of the instanec can be bootstrapped with
 `-T slave` option, which will direct goatos to use local knife config (generated
 via master bootstrap process) and install only LXC specific tooling.
 
+
+## License
+[Apache 2](http://www.apache.org/licenses/LICENSE-2.0)
+
+## Contributing
+
+1. Fork it ( https://github.com/PagerDuty/blender/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request
