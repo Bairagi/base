@@ -12,25 +12,25 @@ end
   end
 end
 
-user 'goatos' do
-  home '/opt/goatos'
+user node['goatos']['user'] do
+  home  node['goatos']['home_dir']
   shell '/bin/bash'
   supports(manage_home: true)
 end
 
-%w{
-  /opt/goatos/bin
-  /opt/goatos/.config
-  /opt/goatos/.local
-  /opt/goatos/.local/share
-  /opt/goatos/.cache
-  /opt/goatos/.ssh
-  /opt/goatos/lxc.conf.d
-  /opt/goatos/recipes
-  /opt/goatos/.config/lxc
-  /opt/goatos/.local/share/lxc
-  /opt/goatos/.local/share/lxcsnaps
-  /opt/goatos/.cache/lxc
+%W{
+  #{node['goatos']['home_dir']}/bin
+  #{node['goatos']['home_dir']}/.config
+  #{node['goatos']['home_dir']}/.local
+  #{node['goatos']['home_dir']}/.local/share
+  #{node['goatos']['home_dir']}/.cache
+  #{node['goatos']['home_dir']}/.ssh
+  #{node['goatos']['home_dir']}/lxc.conf.d
+  #{node['goatos']['home_dir']}/recipes
+  #{node['goatos']['home_dir']}/.config/lxc
+  #{node['goatos']['home_dir']}/.local/share/lxc
+  #{node['goatos']['home_dir']}/.local/share/lxcsnaps
+  #{node['goatos']['home_dir']}/.cache/lxc
   }.each do |dir|
   directory dir do
     user node['goatos']['user']
@@ -46,14 +46,14 @@ file '/etc/lxc/lxc-usernet' do
   content "#{node['goatos']['user']} veth lxcbr0 100\n"
 end
 
-cookbook_file '/opt/goatos/bin/goatos-meta' do
+cookbook_file "#{node['goatos']['home_dir']}/bin/goatos-meta" do
   source 'goatos-meta.rb'
   mode 0700
   user node['goatos']['user']
   group node['goatos']['group']
 end
 
-cookbook_file '/opt/goatos/recipes/test.rb' do
+cookbook_file "#{node['goatos']['home_dir']}/recipes/test.rb" do
   source 'test.rb'
   mode 0644
   user node['goatos']['user']
