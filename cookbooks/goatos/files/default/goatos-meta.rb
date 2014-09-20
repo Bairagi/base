@@ -74,6 +74,9 @@ module GoatOS
       end
     end
     class CLI < Thor
+      def self.exit_on_failure?
+        true
+      end
       class_option :format,
         type: :string,
         aliases: '-F',
