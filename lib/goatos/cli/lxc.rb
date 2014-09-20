@@ -4,6 +4,11 @@ require 'blender/chef'
 module GoatOS
   class CLI < Thor
     class Lxc < Thor
+
+      def self.exit_on_failure?
+        true
+      end
+
       class_option :filter,
         aliases: '-f',
         default: '*:*',

@@ -9,6 +9,10 @@ module GoatOS
   class CLI < Thor
     include Builder
 
+    def self.exit_on_failure?
+      true
+    end
+
     register GoatOS::CLI::Lxc, :lxc, 'lxc', 'Manage LXC lifecycle'
 
     desc 'bootstrap -t HOSTNAME -u SSH_USER', 'Bootstrap a server'
