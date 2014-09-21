@@ -6,12 +6,6 @@
 
 end
 
-%w{ruby-lxc serfx sshkey thor chef-lxc}.each do |gem_name|
-  gem_package gem_name do
-    gem_binary '/opt/chef/embedded/bin/gem'
-  end
-end
-
 user 'goatos' do
   home '/opt/goatos'
   shell '/bin/bash'
@@ -58,4 +52,10 @@ cookbook_file '/opt/goatos/recipes/test.rb' do
   mode 0644
   user node['goatos']['user']
   group node['goatos']['group']
+end
+
+%w{serfx sshkey thor ruby-lxc chef-lxc}.each do |gem_name|
+  gem_package gem_name do
+    gem_binary '/opt/chef/embedded/bin/gem'
+  end
 end
