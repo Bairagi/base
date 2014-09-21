@@ -65,7 +65,6 @@ module GoatOS
     option :cloud,
       description: 'Use a provisioner to spawn instance',
       type: :string
-
     def bootstrap(cwd = Dir.pwd)
       opts = options.dup
       if options[:password]
@@ -74,16 +73,9 @@ module GoatOS
       end
       Dir.chdir(cwd) do
         if options[:cloud]
-          require 'goatos/cloud'
-          require 'goatos/cloud/providers/digital_ocean'
-          config = YAML.load(File.read( options[:cloud] ))
-          klass = GoatOS::Cloud.provider(config['provider'])
-          provisioner = klass.new(config['credentials'])
-          machine_options = config['machine_options']
-          details = provisioner.create(options[:name], machine_options)
-          sleep 90
+          details = create_machine( opts[:name], opts[:cloud], opts[:ssh_port] )
           opts[:host] = details[:host]
-        else
+        elsif opts[:host].nil?
           abort 'You must supply host IP/fqdn  if cloud is not provided'
         end
         case options[:type]
@@ -196,6 +188,7 @@ module GoatOS
     end
 
     no_commands do
+
       def run_blender(command, ssh_opts, chef_opts)
         Blender.blend('goatos_run_chef') do |sched|
           sched.config(:chef, config_file: 'etc/knife.rb', attribute: chef_opts[:attribute])
@@ -204,6 +197,37 @@ module GoatOS
           sched.members(sched.search(:chef, chef_opts[:filter]))
           sched.ssh_task command
         end
+      end
+
+      # create_machine(name, options[:cloud], ssh_port)
+      def create_machine(name, config_file, ssh_port)
+        require 'goatos/cloud'
+        require 'goatos/cloud/providers/digital_ocean'
+        config = YAML.load(File.read( config_file ))
+        klass = GoatOS::Cloud.provider(config['provider'])
+        provisioner = klass.new(config['credentials'])
+        machine_options = config['machine_options']
+        details = provisioner.create(options[:name], machine_options)
+        puts "Waiting till host becomes reachable"
+        until host_reachable?(details[:host], ssh_port )
+          sleep 10
+          print '.'
+        end
+        details
+      end
+
+      def host_reachable?(host, port)
+        socket = TCPSocket.new(host, port)
+        if IO.select([socket], nil, nil, 5)
+          banner = socket.gets
+          banner and !banner.empty?
+        else
+          false
+        end
+      rescue SocketError, Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ENETUNREACH, IOError, Errno::EPERM, Errno::ETIMEDOUT, Errno::ECONNRESET
+        false
+      ensure
+        socket && socket.close
       end
     end
   end

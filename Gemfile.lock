@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/GoatOS/cloud.git
-  revision: c0cded7b08f2235262db2b9c829e0efa246b1569
+  revision: d2faa848039750b462b9b5720f1cefee09b618e6
   specs:
     goatos-cloud (0.0.1)
       droplet_kit
