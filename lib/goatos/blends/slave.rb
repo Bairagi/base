@@ -5,12 +5,6 @@ module GoatOS
     module Slave
       def add_slave_tasks(sched, options )
         sched.ssh_task 'sudo apt-get update -y'
-        sched.ssh_task 'sudo chef-client --no-fork -o recipe[goatos::lxc_install]' do
-          ignore_failure true
-        end
-        sched.ssh_task 'sudo chef-client --no-fork -o recipe[goatos::lxc_configure]' do
-          ignore_failure true
-        end
         sched.ssh_task 'sudo chef-client --no-fork -o recipe[goatos::lxc_install]'
         sched.ssh_task 'sudo chef-client --no-fork -o recipe[goatos::lxc_configure]'
         sched.ssh_task 'reboot instance' do

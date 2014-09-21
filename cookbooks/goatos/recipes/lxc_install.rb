@@ -55,7 +55,7 @@ cookbook_file '/opt/goatos/recipes/test.rb' do
 end
 
 %w{serfx sshkey thor ruby-lxc chef-lxc}.each do |gem_name|
-  gem_package gem_name do
-    gem_binary '/opt/chef/embedded/bin/gem'
+  execute "install_gem_#{gem_name}" do
+    command "/opt/chef/embedded/bin/gem install --no-ri --no-rdoc #{gem_name}"
   end
 end
