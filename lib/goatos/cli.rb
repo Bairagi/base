@@ -19,7 +19,6 @@ module GoatOS
 
     option :host,
       aliases: '-h',
-      required: true,
       description: 'Host IP/FQDN'
 
     option :name,
@@ -63,6 +62,10 @@ module GoatOS
       description: 'Chef run list',
       type: :string
 
+    option :cloud,
+      description: 'Use a provisioner to spawn instance',
+      type: :string
+
     def bootstrap(cwd = Dir.pwd)
       opts = options.dup
       if options[:password]
@@ -70,6 +73,19 @@ module GoatOS
         opts.merge!(password: password)
       end
       Dir.chdir(cwd) do
+        if options[:cloud]
+          require 'goatos/cloud'
+          require 'goatos/cloud/providers/digital_ocean'
+          config = YAML.load(File.read( options[:cloud] ))
+          klass = GoatOS::Cloud.provider(config['provider'])
+          provisioner = klass.new(config['credentials'])
+          machine_options = config['machine_options']
+          details = provisioner.create(options[:name], machine_options)
+          sleep 90
+          opts[:host] = details[:host]
+        else
+          abort 'You must supply host IP/fqdn  if cloud is not provided'
+        end
         case options[:type]
         when 'master'
           build_master( opts )
