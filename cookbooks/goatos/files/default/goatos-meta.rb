@@ -1,10 +1,10 @@
 #!/opt/chef/embedded/bin/ruby
 
 require 'lxc'
+require 'lxc/extra'
 require 'json'
 require 'thor'
 require 'mixlib/shellout'
-require 'chef/application/lxc'
 
 module GoatOS
   module Meta

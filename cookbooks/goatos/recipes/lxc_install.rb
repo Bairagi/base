@@ -54,7 +54,7 @@ cookbook_file '/opt/goatos/recipes/test.rb' do
   group node['goatos']['group']
 end
 
-%w{serfx sshkey thor ruby-lxc}.each do |gem_name|
+%w{serfx sshkey thor ruby-lxc lxc-extra}.each do |gem_name|
   execute "install_gem_#{gem_name}" do
     command "/opt/chef/embedded/bin/gem install --no-ri --no-rdoc #{gem_name}"
   end
