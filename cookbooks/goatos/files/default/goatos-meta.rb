@@ -5,6 +5,7 @@ require 'lxc/extra'
 require 'json'
 require 'thor'
 require 'mixlib/shellout'
+require 'chef'
 
 module GoatOS
   module Meta
