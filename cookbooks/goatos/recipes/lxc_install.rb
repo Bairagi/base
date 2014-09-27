@@ -13,7 +13,7 @@ end
 end
 
 user node['goatos']['user'] do
-  home  node['goatos']['home_dir']
+  home node['goatos']['home_dir']
   shell '/bin/bash'
   supports(manage_home: true)
 end
@@ -58,4 +58,10 @@ cookbook_file "#{node['goatos']['home_dir']}/recipes/test.rb" do
   mode 0644
   user node['goatos']['user']
   group node['goatos']['group']
+end
+
+%w{serfx sshkey thor ruby-lxc lxc-extra}.each do |gem_name|
+  execute "install_gem_#{gem_name}" do
+    command "/opt/chef/embedded/bin/gem install --no-ri --no-rdoc #{gem_name}"
+  end
 end

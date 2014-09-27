@@ -1,10 +1,11 @@
 #!/opt/chef/embedded/bin/ruby
 
 require 'lxc'
+require 'lxc/extra'
 require 'json'
 require 'thor'
 require 'mixlib/shellout'
-require 'chef/application/lxc'
+require 'chef'
 
 module GoatOS
   module Meta
@@ -74,6 +75,9 @@ module GoatOS
       end
     end
     class CLI < Thor
+      def self.exit_on_failure?
+        true
+      end
       class_option :format,
         type: :string,
         aliases: '-F',

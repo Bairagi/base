@@ -45,7 +45,7 @@ module GoatOS
       end
 
       def add_chef_run_task(sched, node_name, run_list)
-        sched.ruby_task 'run chef' do
+        sched.ruby_task "set '#{node_name}' run list to '#{run_list}'" do
           execute do |h|
             extend Helper
             chef_node(node_name) do |node|
