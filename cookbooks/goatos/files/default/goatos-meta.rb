@@ -88,6 +88,7 @@ module GoatOS
       def converge(container)
         store = JSONStore.new
         recipe = store.get(container).chef_recipe
+        return if recipe.nil?
         recipe_path = "/opt/goatos/recipes/#{recipe}.rb"
         recipe_text = File.read(recipe_path)
         Chef::Config[:solo] = true
