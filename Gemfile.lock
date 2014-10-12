@@ -83,6 +83,10 @@ GEM
       json
       mixlib-log (~> 1.3)
       rack
+    chefspec (4.0.2)
+      chef (~> 11.12)
+      fauxhai (~> 2.0)
+      rspec (~> 3.0)
     clipboard (1.0.5)
     coderay (1.1.0)
     coercible (1.0.0)
@@ -106,6 +110,9 @@ GEM
       unicode-display_width (>= 0.1.1)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
+    fauxhai (2.2.0)
+      net-ssh
+      ohai
     ffi (1.9.3)
     ffi-yajl (1.1.0)
       ffi (~> 1.5)
@@ -278,6 +285,7 @@ DEPENDENCIES
   blender-chef!
   bundler
   chef
+  chefspec
   goatos-base!
   goatos-cloud!
   irbtools
