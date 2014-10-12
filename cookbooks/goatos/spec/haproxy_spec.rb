@@ -6,11 +6,7 @@ describe 'goatos::haproxy' do
   it 'should install package haproxy' do
     expect(chef_run).to install_package 'haproxy'
   end
-
-
   it 'should start service haproxy' do
     expect(chef_run).to start_service 'haproxy'
   end
-
-
 end

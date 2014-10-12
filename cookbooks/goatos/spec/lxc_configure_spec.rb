@@ -4,8 +4,6 @@ describe 'goatos::lxc_configure' do
   let(:chef_run) do
     stub_search("node", "roles:master").and_return([{'goatos' =>{'sshkey' => 'foobar'}}])
     ChefSpec::Runner.new do |node|
-      role = Chef::Role.new
-      role.name 'master'
     end.converge(described_recipe)
   end
 
