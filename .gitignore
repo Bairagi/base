@@ -1,5 +1,11 @@
+# local scripts & logs
 *.sh
 *.log
+
+# private configs & keys
 knife.rb
 *.rsa
 keys
+
+# Bundler
+.bundle/
