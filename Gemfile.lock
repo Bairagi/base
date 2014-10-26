@@ -1,10 +1,10 @@
 GIT
   remote: git://github.com/GoatOS/cloud.git
-  revision: d2faa848039750b462b9b5720f1cefee09b618e6
+  revision: 2696b54fb8b47a14164887c88e7b370a48afd6a2
   specs:
     goatos-cloud (0.0.1)
+      aws-sdk
       droplet_kit
-      fog
 
 GIT
   remote: git://github.com/PagerDuty/blender-chef.git
@@ -16,7 +16,7 @@ GIT
 
 GIT
   remote: git://github.com/PagerDuty/blender.git
-  revision: 9328903230a957ca6ce66a437c9d5137e0130d8b
+  revision: 734bd02b2dcb1a24b7aaca6f73ed62c0195b8bfb
   specs:
     pd-blender (0.0.1)
       highline
@@ -32,6 +32,7 @@ PATH
     goatos-base (0.0.1)
       blender-chef
       chef
+      net-scp
       pd-blender
       sshkey
       thor
@@ -51,6 +52,11 @@ GEM
     astrolabe (1.3.0)
       parser (>= 2.2.0.pre.3, < 3.0)
     awesome_print (1.2.0)
+    aws-sdk (1.57.0)
+      aws-sdk-v1 (= 1.57.0)
+    aws-sdk-v1 (1.57.0)
+      json (~> 1.4)
+      nokogiri (>= 1.4.4)
     axiom-types (0.1.1)
       descendants_tracker (~> 0.0.4)
       ice_nine (~> 0.11.0)
@@ -59,32 +65,30 @@ GEM
     boson (1.2.4)
     boson-more (0.2.2)
       boson (>= 1.2.0)
-    builder (3.2.2)
-    chef (11.16.2)
-      chef-zero (~> 2.1, >= 2.1.4)
+    chef (12.0.0.alpha.2)
+      chef-zero (~> 3.1)
       diff-lcs (~> 1.2, >= 1.2.4)
       erubis (~> 2.7)
-      ffi-yajl (~> 1.0)
+      ffi-yajl (~> 1.0, >= 1.0.2)
       highline (~> 1.6, >= 1.6.9)
-      mime-types (~> 1.16)
       mixlib-authentication (~> 1.3)
       mixlib-cli (~> 1.4)
       mixlib-config (~> 2.0)
       mixlib-log (~> 1.3)
-      mixlib-shellout (~> 1.4)
+      mixlib-shellout (>= 2.0.0.rc.0, < 3.0)
       net-ssh (~> 2.6)
       net-ssh-multi (~> 1.1)
-      ohai (~> 7.4)
+      ohai (>= 7.6.0.rc.0)
       plist (~> 3.1.0)
       pry (~> 0.9)
-      rest-client (>= 1.0.4, <= 1.6.7)
-    chef-zero (2.2)
+    chef-zero (3.2)
+      ffi-yajl (~> 1.1)
       hashie (~> 2.0)
-      json
       mixlib-log (~> 1.3)
       rack
-    chefspec (4.0.2)
-      chef (~> 11.12)
+      uuidtools (~> 2.1)
+    chefspec (4.1.1)
+      chef (>= 11.14)
       fauxhai (~> 2.0)
       rspec (~> 3.0)
     clipboard (1.0.5)
@@ -97,14 +101,14 @@ GEM
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
     diff-lcs (1.2.5)
-    droplet_kit (1.0.1)
+    droplet_kit (1.0.2)
+      activesupport (~> 4.1.6)
       kartograph (~> 0.0.5)
       resource_kit (~> 0.0.5)
       virtus (~> 1.0.3)
     equalizer (0.0.9)
     erubis (2.7.0)
     every_day_irb (1.6.1)
-    excon (0.39.5)
     fancy_irb (0.7.3)
       paint (>= 0.8.1)
       unicode-display_width (>= 0.1.1)
@@ -113,41 +117,16 @@ GEM
     fauxhai (2.2.0)
       net-ssh
       ohai
-    ffi (1.9.3)
-    ffi-yajl (1.1.0)
+    ffi (1.9.6)
+    ffi-yajl (1.2.0)
       ffi (~> 1.5)
       libyajl2 (~> 1.0)
-    fog (1.23.0)
-      fog-brightbox
-      fog-core (~> 1.23)
-      fog-json
-      fog-softlayer
-      ipaddress (~> 0.5)
-      nokogiri (~> 1.5, >= 1.5.11)
-    fog-brightbox (0.5.1)
-      fog-core (~> 1.22)
-      fog-json
-      inflecto
-    fog-core (1.24.0)
-      builder
-      excon (~> 0.38)
-      formatador (~> 0.2)
-      mime-types
-      net-scp (~> 1.1)
-      net-ssh (>= 2.1.3)
-    fog-json (1.0.0)
-      multi_json (~> 1.0)
-    fog-softlayer (0.3.17)
-      fog-core
-      fog-json
-    formatador (0.2.5)
     g (1.7.2)
     hashie (2.1.2)
     highline (1.6.21)
     hirb (0.7.2)
     i18n (0.6.11)
     ice_nine (0.11.0)
-    inflecto (0.0.2)
     interactive_editor (0.0.10)
       spoon (>= 0.0.1)
     ipaddress (0.8.0)
@@ -177,21 +156,21 @@ GEM
       wirb (>= 1.0.3)
     json (1.8.1)
     kartograph (0.0.8)
-    libyajl2 (1.0.1)
+    libyajl2 (1.1.0)
     method_locator (0.0.4)
     method_source (0.8.2)
     methodfinder (2.0.0)
     mime-types (1.25.1)
     mini_portile (0.6.0)
-    minitest (5.4.1)
+    minitest (5.4.2)
     mixlib-authentication (1.3.0)
       mixlib-log
     mixlib-cli (1.5.0)
     mixlib-config (2.1.0)
     mixlib-log (1.6.0)
-    mixlib-shellout (1.4.0)
-    multi_json (1.10.1)
+    mixlib-shellout (2.0.0.rc.0)
     multipart-post (2.0.0)
+    net-dhcp (1.3.1)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
@@ -202,21 +181,23 @@ GEM
       net-ssh-gateway (>= 1.2.0)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
-    ohai (7.4.0)
+    ohai (7.6.0.rc.0)
       ffi (~> 1.9)
-      ffi-yajl (~> 1.0)
+      ffi-yajl (~> 1.1)
       ipaddress
       mime-types (~> 1.16)
       mixlib-cli
       mixlib-config (~> 2.0)
       mixlib-log
-      mixlib-shellout (~> 1.2)
+      mixlib-shellout (>= 2.0.0.rc.0, < 3.0)
+      net-dhcp
+      rake (~> 10.1)
       systemu (~> 2.6.4)
       wmi-lite (~> 1.0)
     ori (0.1.0)
     os (0.9.6)
     paint (0.8.7)
-    parser (2.2.0.pre.4)
+    parser (2.2.0.pre.5)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
     plist (3.1.0)
@@ -232,20 +213,18 @@ GEM
       activesupport (>= 3.0)
       addressable (~> 2.3.6)
       faraday
-    rest-client (1.6.7)
-      mime-types (>= 1.16)
     rspec (3.1.0)
       rspec-core (~> 3.1.0)
       rspec-expectations (~> 3.1.0)
       rspec-mocks (~> 3.1.0)
-    rspec-core (3.1.4)
+    rspec-core (3.1.7)
       rspec-support (~> 3.1.0)
-    rspec-expectations (3.1.1)
+    rspec-expectations (3.1.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.1.0)
-    rspec-mocks (3.1.1)
+    rspec-mocks (3.1.3)
       rspec-support (~> 3.1.0)
-    rspec-support (3.1.0)
+    rspec-support (3.1.2)
     rubocop (0.26.1)
       astrolabe (~> 1.3)
       parser (>= 2.2.0.pre.4, < 3.0)
@@ -268,6 +247,7 @@ GEM
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     unicode-display_width (0.1.1)
+    uuidtools (2.1.5)
     virtus (1.0.3)
       axiom-types (~> 0.1)
       coercible (~> 1.0)
@@ -284,7 +264,7 @@ PLATFORMS
 DEPENDENCIES
   blender-chef!
   bundler
-  chef
+  chef (>= 12.0.0.alpha.2)
   chefspec
   goatos-base!
   goatos-cloud!

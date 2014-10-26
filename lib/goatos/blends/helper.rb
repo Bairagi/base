@@ -1,7 +1,7 @@
-require 'chef/knife/bootstrap'
-require 'chef/knife/cookbook_upload'
-require 'chef/knife/role_from_file'
 require 'goatos/log'
+require 'chef/config'
+require 'chef/node'
+require 'net/scp'
 
 module GoatOS
   module Blends

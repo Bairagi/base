@@ -1,3 +1,5 @@
 name 'goatos'
 description 'Installs LXC'
 version '0.0.1'
+maintainer 'Ranjib Dey'
+maintainer_email 'ranjib@linux.com'

@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pd-blender'
   spec.add_dependency 'blender-chef'
   spec.add_dependency 'sshkey'
+  spec.add_dependency 'net-scp'
 
 
   spec.add_development_dependency 'bundler'
