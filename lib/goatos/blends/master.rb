@@ -5,19 +5,15 @@ module GoatOS
     module Master
       def add_master_tasks( sched, node_name, options )
         sched.ssh_task 'sudo apt-get update -y'
-
         sched.ssh_task 'download chef server' do
           execute 'wget -c https://opscode-omnibus-packages.s3.amazonaws.com/ubuntu/12.04/x86_64/chef-server_11.1.4-1_amd64.deb'
         end
-
         sched.ssh_task 'install chef server' do
           execute 'sudo dpkg -i chef-server_11.1.4-1_amd64.deb'
         end
-
         sched.ssh_task 'reconfigure chef server' do
           execute 'sudo chef-server-ctl reconfigure'
         end
-
         %w(admin.pem chef-validator.pem).each do |key|
           printer = StringIO.new
           sched.ssh_task "retrieve  file '#{key}'" do
