@@ -1,5 +1,5 @@
 # local scripts & logs
-*.sh
+test.sh
 *.log
 
 # private configs & keys

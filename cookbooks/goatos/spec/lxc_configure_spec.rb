@@ -3,7 +3,7 @@ require 'chefspec'
 describe 'goatos::lxc_configure' do
   let(:chef_run) do
     stub_search("node", "roles:master").and_return([{'goatos' =>{'sshkey' => 'foobar'}}])
-    ChefSpec::Runner.new do |node|
+    ChefSpec::SoloRunner.new do |node|
     end.converge(described_recipe)
   end
 

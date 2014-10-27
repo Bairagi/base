@@ -24,7 +24,7 @@ module GoatOS
   end
 
   module ProviderHelper
-    Listener = Struct.new(:name, :listen, :port, :mode, :ip)
+    Listener ||= Struct.new(:name, :listen, :port, :mode, :ip)
     def state_file
       '/opt/goatos/goats.json'
     end
