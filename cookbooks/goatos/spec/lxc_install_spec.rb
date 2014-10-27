@@ -1,7 +1,7 @@
 require 'chefspec'
 
 describe 'goatos::lxc_install' do
-  let(:chef_run) { ChefSpec::Runner.new.converge(described_recipe) }
+  let(:chef_run) { ChefSpec::SoloRunner.new.converge(described_recipe) }
 
   %w{liblxc1 lxc lxc-dev lxc-templates python3-lxc cgmanager-utils build-essential}.each do |pkg|
     it "should install package #{pkg}" do

@@ -1,0 +1,8 @@
+current_dir = File.dirname(File.expand_path(__FILE__))
+chef_server_url 'http://<%=@ip%>:4646'
+client_key File.join(current_dir, 'admin.pem')
+node_name 'admin'
+cookbook_path Array(File.join(current_dir, 'vendor'))
+cache_type 'BasicFile'
+validation_key File.join(current_dir, 'validation.pem')
+cache_options(path: File.join(current_dir, 'cache') )

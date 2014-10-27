@@ -1,0 +1,37 @@
+ipaddress = "<%= @ip %>"
+port = 4646
+hostname = "<%= @ip %>"
+log-file = "/tmp/goiardi.log"
+syslog = false
+log-level = "error"
+#index-file = "/tmp/goiardi-index.bin"
+#data-file = "/tmp/goiardi-data.bin"
+#freeze-interval = 120
+time-slew = "15m"
+conf-root = "/etc/goiardi"
+local-filestore-dir = "/var/goiardi/file_checksums"
+use-auth = true
+use-ssl = false
+# ssl-cert="/path/to/goiardi/conf/cert.pem"
+# ssl-key="/path/to/goiardi/conf/key.pem"
+https-urls = false
+disable-webui = false
+log-events = true
+#log-event-keep = 1000
+#obj-max-size = 10485760
+#json-req-max-size = 1000000
+# use-unsafe-mem-store = false
+# db-pool-size = 25
+# max-connections = 50
+use-serf = false
+# serf-addr = "127.0.0.1:7373"
+use-shovey = false
+# sign-priv-key = "/path/to/shovey.key"
+use-mysql = false
+use-postgres = true
+[postgresql]
+  username = "goiardi"
+  host = "localhost"
+  port = "5432"
+  dbname = "goiardi"
+  sslmode = "disable"

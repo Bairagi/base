@@ -1,3 +1,6 @@
 default['goatos']['user'] = 'goatos'
 default['goatos']['group'] = 'goatos'
 default['goatos']['home_dir'] = '/opt/goatos'
+default['goatos']['goiardi_ip'] = '10.0.3.1'
+default['goatos']['goiardi_url'] = 'https://github.com/ctdk/goiardi/releases/download/v0.8.1/goiardi-0.8.1-linux-x86-64'
+default['goatos']['goiardi_binary'] = 'ff1f072d1953226c501507af79cb6093d9c3aa9a8378b33480031a26b66517c4'
