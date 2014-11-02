@@ -35,7 +35,7 @@ module GoatOS
       end
       def fetch_metadata
         collection = { 'containers'=> {}, 'last_updated' => nil }
-        if File.exists?(state_file)
+        if File.exist?(state_file)
           data = JSON.parse(File.read(state_file))
           data['containers'].each do |name, meta|
             collection['containers'][name] = CtMetadata.new(*meta.values)
@@ -179,6 +179,8 @@ module GoatOS
       def delete(name)
         store = JSONStore.new
         store.delete(name)
+      end
+      no_command do
       end
     end
   end

@@ -85,7 +85,7 @@ via master bootstrap process) and install only LXC specific tooling.
 
 ## Contributing
 
-1. Fork it ( https://github.com/PagerDuty/blender/fork )
+1. Fork it ( https://github.com/goatos/base/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)

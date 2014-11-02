@@ -30,7 +30,7 @@ module GoatOS
     end
 
     def compute_listeners
-      return [] unless File.exists?(state_file)
+      return [] unless File.exist?(state_file)
       listeners = []
       metadata = JSON.parse(File.read(state_file))
       metadata['containers'].each do |n, meta|
