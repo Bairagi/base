@@ -1,5 +1,5 @@
-# Cookbook Name:: go-server
-# Recipe:: default
+# Cookbook Name:: go_cd
+# Recipe:: go-server
 
 
 %w{openjdk-7-jdk unzip}.each do |pkg|

@@ -1,11 +1,19 @@
+
 # local scripts & logs
-test.sh
 *.log
 
-# private configs & keys
-knife.rb
-*.rsa
-keys
+# Chef
+.chef/
+
+# private configs & repo
+keys/*
+certificates/
+etc/knife.rb
+berks-cookbooks/*
 
 # Bundler
 .bundle/
+
+# Test-kitchen
+.kitchen/*
+.zero-knife.rb
